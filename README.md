@@ -1,6 +1,6 @@
 Dscourse
 =========
 
-Takign the i out of discourse.
+Taking the i out of discourse.
 
 Second change. 
