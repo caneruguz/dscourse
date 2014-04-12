@@ -1,111 +1,32 @@
-<?php 
-ini_set('display_errors',1); 
- error_reporting(E_ALL);   
- 
-  define('MyConst', TRUE);                                // Avoids direct access to config.php
-
-    include "php/config.php"; 
-	date_default_timezone_set('UTC');
-    
-   	//CHECK IF LTI
-	$LTI = FALSE;
-	
-	include_once('php/dscourse.class.php');
-	$launch = $dscourse->LTI("discussion");
-	if($launch != FALSE){
-		$LTI = TRUE;
-	}
-	$cID;
-	$discId;
-	$uId;
-	$origin; 
-	$courseInfo; 
-	$discussionInfo;
-	$discId;
-	$preProcess;
-	$query;
-	
-    if($LTI)                        // Checks to see if user is logged in, if not sends the user to login.php
-    {
-    	//exit("LTI");
-    	//CREATE A SESSION
-		$uId = $launch->user->attrs['uID'];
-		
-		$_SESSION['Username'] = strtolower($launch->user->attrs['username']); 
-        $_SESSION['firstName'] = $launch->user->attrs['firstName'];
-        $_SESSION['lastName'] = $launch->user->attrs['lastName'];   
-        $_SESSION['LoggedIn'] = 1;  
-        $_SESSION['status'] = 'Student';
-        $_SESSION['UserID'] = $uId;
-		
-		$discId = $launch->props['discID'];
-		$discussionInfo = $dscourse->DiscussionInfo($discId);
-		$courseId = $launch->props['courseId']; 
-		$courseInfo = $dscourse->CourseInfo($courseId);
-
-		
-		//FAKE THE REQUEST
-		$_GET['d'] = $discId;
-		$_GET['c'] = $courseId;
-		$query = "/discussion.php?d=$discId&c=$courseId";
-	}
-	else{	
-		$query = $_SERVER["REQUEST_URI"];
-	}
-	$preProcess = $dscourse->PreProcess($query);
-	$crumbs = FALSE;
-	if(isset($_SESSION['LTI']) && $_SESSION['LTI'] == "course"){
-		$LTI = TRUE;
-		$crumbs = TRUE;
-	}
-    $uId = $_SESSION['UserID'];           // Allocate userID to use throughout the page
-    if(isset($_GET['d'])){                   // Check if discussion id is set. If not send them back to index
-        $discId = $_GET['d']; 
-        $discussionInfo = $dscourse->DiscussionInfo($discId); 
-    } else {
-        header("Location: index.php");  
-        exit(); 
-    }
-       
-    $cID = $_GET['c']; 
-    $courseInfo = $dscourse->CourseInfo($cID);
-	$userNav = $dscourse->UserInfo($uId); 
-
-	//Try loading
-	$load = $dscourse->LoadDiscussion($discId, $uId);
-    if($load){
-    	$discUsers = $dscourse->GetUsers($cID);
-		$currentSession = session_id(); 
-	   // Show content
-		//get last view log time
-		$lastView = $dscourse->GetLastView($discId,$uId);
-?>
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <title> dscourse | <?php echo $discussionInfo['dTitle']; ?></title>
-        <?php
-		include ('php/header_includes.php');
-  		?>
-        <script type="text/javascript" src="js/dscourse.js"></script>
-        <script type="text/javascript" src="js/mention.min.js" /></script>
-		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <title> dscourse Discussions </title>
+
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"> </script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.21.custom.min.js"></script>
+    <script type="text/javascript" src="js/timeago.jquery.js"></script>
+    <script type="text/javascript" src="js/notification.js"></script>
+    <script type="text/javascript" src="js/validate.js"></script>
+    <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
+    <script type="text/javascript" src="js/dscourse.js"></script>
+    <script type="text/javascript" src="js/mention.min.js" /></script>
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <link href="css/bootstrap.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="css/style.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="css/animate.css" media="screen" rel="stylesheet" type="text/css">
     <script type="text/javascript">
           // Add some global variables about current user if we need them:
-			<?php echo "var lti = " . (($LTI) ? 'true' : 'false') . ";"; ?>
-            <?php echo "var currentUserStatus = '" . $_SESSION['status'] . "';"; ?>
-            <?php echo "var currentUserID = '" . $_SESSION['UserID'] . "';"; ?>
-            <?php echo "var dUserAgent = '" . $_SERVER['HTTP_USER_AGENT'] . "';"; ?>
-            <?php echo "var discID = " . $discId . ";"; ?>
-            <?php echo "var currentSession = '" . $currentSession . "';"; ?>
-            <?php echo "var settings = '".json_encode($preProcess) . "';";?>
-            <?php echo "var discUsers = ".json_encode($discUsers).";";?>
-            <?php echo "var lastView = '$lastView';";?> 
-            <?php if(isset($_REQUEST['p'])){
-            	$pID = $_REQUEST['p'];
-				echo "var goTo='$pID';";
-            }?>
+            var currentUserStatus = 'student';
+            var currentUserID = 0;
+            var dUserAgent = 'Chrome';
+            var discID = 0;
+            var currentSession = '';
+            var settings = '';
+            var discUsers = '';
+            var lastView = '';
     </script>
 <style>
 .synTop .userThumbTiny {
@@ -116,56 +37,24 @@ display: inline;
 </head>
 
 <body>
-	<?php 
-	if(!$LTI || ($LTI && $crumbs)){ ?>
+
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container-fluid">
-                <a href="<?php echo ($LTI)?"javascript:void(0)":"index.php";?>" class="brand" id="homeNav">dscourse</a>
-
-                <ul class="nav">
-                    <li class="navLevel"><a href="course.php?c=<?php echo $cID ?>&lti=true" id="coursesNav"><?php echo $dscourse -> myTruncate($courseInfo['courseName'], 15, ' ', '...'); ?></a></li>
-                    <?php if(!$LTI) { ?> <li class="navLevel"><a href="discussion.php?d=<?php echo $discId . '&c=' . $cID ?>" id="discussionNav"><?php echo $dscourse -> myTruncate($discussionInfo['dTitle'], 15, ' ', '...'); ?></a></li> <?php } ?>
-
-                </ul>
-
-              <?php if(!$LTI){ ?>
-               <ul class="nav pull-right">
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#"><img class="thumbNav" src="<?php echo $userNav['userPictureURL']; ?>" />  <?php echo $_SESSION['firstName'] . " " . $_SESSION['lastName']; ?> <b class="caret"></b> </a>
-
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a id="profileNav" href="profile.php?u=<?php echo $_SESSION['UserID']; ?>">Profile</a></li>
-                            <li><a href="php/logout.php">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <?php } ?>
+                <h3>Dscourse</h3>
             </div>
         </div>
     </div><!-- End of header content-->
-    <?php
-	}
-	else{
- 		?>
-		<div class="navbar navbar-fixed-top">
-        	<div class="navbar-inner">
-        	<div class="container-fluid">
-        		<span class="brand" id="homeNav">dscourse</span>
-        	</div>
-        	</div>
-    	</div><!-- End of header content-->	
-	<?php } ?>
         <header class="jumbotron subhead discjumbotron">
             <div class="container-fluid">
                 <div class="btn-toolbar" id="toolbox">
-                	<?php if(isset($preProcess['options']['useTimeline']) && $preProcess['options']['useTimeline'] == "Yes"){ ?>
-                    <button id="showTimeline" class="btn btn-small btn-info">Timeline</button> <?php } ?>
-                    <?php if(isset($preProcess['options']['useSynthesis']) && $preProcess['options']['useSynthesis'] == "Yes"){ ?>
-                    <button id="showSynthesis" class="btn btn-small btn-warning">Connected Posts</button> <?php } ?>
-                    <?php if($preProcess['status']=="OK"){ ?>
+
+                    <button id="showTimeline" class="btn btn-small btn-info">Timeline</button>
+
+                    <button id="showSynthesis" class="btn btn-small btn-warning">Connected Posts</button>
+
                     <button id="" class="btn btn-small btn-success sayBut2" postid="0"><i class="icon-comment icon-white"></i> Say</button> <input id="dIDhidden" type="hidden" name="discID" value="">
-                    <?php } ?>
+
                     <div class="btn-group" id="participantList">
                         <button class="btn disabled ">Participants:</button>
                     </div>
@@ -184,13 +73,13 @@ display: inline;
             <div class="row-fluid" id="controlsRow">
                 <div class="span12" id="dFooter">
                     <div id="controlsWrap">
-                    	<?php if(!isset($preProcess['options']['useTimeline']) || ($preProcess['options']['useTimeline'] == "Yes")){ ?>
+
                         <div id="timeline" class="">
                             <div id="slider-range">
                                 <div id="dots"></div>
                             </div><input type="text" id="amount">
                         </div>
-                        <?php } ?>
+
                     </div>
                 </div>
             </div>
@@ -198,7 +87,7 @@ display: inline;
             <div class="row-fluid" id="dRowMiddle">
                 <div class="span4 ">
                     <div id="row-fluid">
-                    	<?php if(!isset($preProcess['options']['showInfo']) || ($preProcess['options']['showInfo']=="Yes")){ ?>
+
                         <div class="span11" id="dSidebar">
                             <div class="dCollapse" id="dInfo">
                                 <span class="boxHeaders"><span id="dTitleView"></span></span><br /> <!--
@@ -206,9 +95,8 @@ display: inline;
                             say <input id="dIDhidden" type="hidden" name="discID" value="">
                         </div>
 -->
-
                                 <div id="discStatus" class="alert"></div>
-								<?php if(!$LTI) { ?>
+
                                 <div class="content">
                                     <div id="dPromptView"></div>
 
@@ -229,7 +117,7 @@ display: inline;
                                     </div>
 
                                 </div>
-								<?php } ?>
+
                                 <h4 id="recentPostsHeader"></h4>
 
                                 <div class="content">
@@ -240,7 +128,7 @@ display: inline;
                             <div class="dCollapse hide" id="dSynthesis">
                                 <div class="content">
                                     <div class="hide" id="addSynthesis">
-                                        <input id="sPostIDhidden" type="hidden" name="sPostIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="<?php echo $_SESSION['UserID']; ?>"> 
+                                        <input id="sPostIDhidden" type="hidden" name="sPostIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="">
                                         <textarea id="synthesisText">
 Your synthesis comment...
 </textarea>
@@ -261,7 +149,6 @@ Your synthesis comment...
                                 </div>
                             </div>
                         </div><!-- close span11 -->
-						<?php } ?>
                         <div class="span1" id="vHeatmap">
                             <div id="scrollBox"></div>
                         </div>
@@ -284,7 +171,7 @@ Your synthesis comment...
             </div><!-- close row -->
 
             <div id="commentWrap">
-                <input id="postIDhidden" type="hidden" name="postIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="<?php echo $_SESSION['UserID']; ?>">
+                <input id="postIDhidden" type="hidden" name="postIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="userid">
 
                 <div id="top">
                     <div id="quick">
@@ -346,10 +233,7 @@ Your comment...
     </div><!-- End individual discussion page -->
 
 <div id="checkNewPost"></div>
-    <?php
-	} else {?>
-		<div class="alert alert-danger"> You are not authorized to view this discussion. You may have been misdirected or entered a wrong link. Also even if a network is private the course creator may have limited access to course members. If this is an error please contact your site administrator. <a href="index.php"> Go back to dscourse </a> </div>
-	<?php } ?>
+
 <script type="text/javascript">
     // Latest itiration of 22the shiva elements through iframe
     var sampleData = "{\"chartType\": \"BarChart\",\"areaOpacity\": \".3\",\"backgroundColor\": \"\",\"chartArea\": \"\",\"colors\": \"\",\"fontName\": \"Arial\",\"fontSize\": \"automatic\",\"hAxis\": \"\",\"legend\": \"right\",\"legendTextStyle\": \"\",\"height\": \"400\",\"isStacked\": \"true\",\"lineWidth\": \"2\",\"pointSize\": \"7\",\"series\": \"\",\"title\": \"\",\"titleTextStyle\": \"\",\"tooltipTextStyle\": \"\", \"vAxis\": \"\",\"width\": \"600\", \"dataSourceUrl\": \"https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AsMQEd_YoBWldHZNbGU2czNfa004UmpzeC13MkZZb0E&output=html\",\"query\": \"\",\"shivaGroup\": \"Visualization\"}";
@@ -363,7 +247,7 @@ Your comment...
         else
             window.attachEvent("message", shivaMessageHandler);
 
-        dscourse = new Dscourse(lti);
+        dscourse = new Dscourse();
         // Fasten seat belts, dscourse is starting...
     });
 

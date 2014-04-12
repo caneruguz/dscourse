@@ -35,28 +35,28 @@ function Dscourse(lti) {
     this.newPosts = '';
     // A string of the posts for a discussion that are new when refreshed. This variable is used to transfer post ids between functions.
     var discSettings = $.parseJSON(settings)
-    var options = settings.options;
-    if(options.length >0 ){
-        this.options = {
-            charLimit : parseInt(options.charLimit),
-            synthesis : (options.useSynthesis=="Yes")?true:false,
-            infoPanel : (options.showInfo=="Yes")?true:false,
-            media : true,
-            timeline : (options.useTimeline=="Yes")?true:false
-        };
-    }
-    else{
-        this.options = {
-            charLimit : 500,
-            synthesis : true,
-            infoPanel : true,
-            media : true,
-            timeline : true
-        }
-    }
+// TODO: Revise options setting.
+//    var options = settings.options;
+//    if(options.length >0 ){
+//        this.options = {
+//            charLimit : parseInt(options.charLimit),
+//            synthesis : (options.useSynthesis=="Yes")?true:false,
+//            infoPanel : (options.showInfo=="Yes")?true:false,
+//            media : true,
+//            timeline : (options.useTimeline=="Yes")?true:false
+//        };
+//    }
+//    else{
+//        this.options = {
+//            charLimit : 500,
+//            synthesis : true,
+//            infoPanel : true,
+//            media : true,
+//            timeline : true
+//        }
+//    }
     this.charCount = true;
     //lti
-    this.lti = lti;
     this.init = true;
     //This is used to handle redrawing of the vertical heatmap when media displays get closed
     //Maybe it will be useful down the road as we start adding views? 
