@@ -21,12 +21,14 @@
           // Add some global variables about current user if we need them:
             var currentUserStatus = 'student';
             var currentUserID = 0;
-            var dUserAgent = 'Chrome';
-            var discID = 0;
-            var currentSession = '';
             var settings = '';
-            var discUsers = '';
-            var lastView = '';
+            var discUsers = [
+                    {
+                        'firstName' : 'Caner', 
+                        'lastName'  : 'Uguz',
+                        'userID'    : 1
+                    }
+                ] ;
     </script>
 <style>
 .synTop .userThumbTiny {
@@ -38,13 +40,7 @@ display: inline;
 
 <body>
 
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <h3>Dscourse</h3>
-            </div>
-        </div>
-    </div><!-- End of header content-->
+
         <header class="jumbotron subhead discjumbotron">
             <div class="container-fluid">
                 <div class="btn-toolbar" id="toolbox">
@@ -95,28 +91,7 @@ display: inline;
                             say <input id="dIDhidden" type="hidden" name="discID" value="">
                         </div>
 -->
-                                <div id="discStatus" class="alert"></div>
 
-                                <div class="content">
-                                    <div id="dPromptView"></div>
-
-                                    <div id="dCourse">
-                                        <b>Course:</b>
-                                    </div>
-
-                                    <div id="dSDateView">
-                                        <b>Start Date:</b>
-                                    </div>
-
-                                    <div id="dODateView">
-                                        <b>Open To Class:</b>
-                                    </div>
-
-                                    <div id="dCDateView">
-                                        <b>End Date:</b>
-                                    </div>
-
-                                </div>
 
                                 <h4 id="recentPostsHeader"></h4>
 
