@@ -1,67 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title> dscourse Discussions </title>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dscourse as Add on </title>
 
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/dscourse.css" rel="stylesheet">
 
-    <script type="text/javascript" src="js/jquery-1.7.1.min.js"> </script>
-    <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.21.custom.min.js"></script>
-    <script type="text/javascript" src="js/timeago.jquery.js"></script>
-    <script type="text/javascript" src="js/notification.js"></script>
-    <script type="text/javascript" src="js/validate.js"></script>
-    <script type="text/javascript" src="js/jquery.scrollTo-min.js"></script>
-    <script type="text/javascript" src="js/dscourse.js"></script>
-    <script type="text/javascript" src="js/mention.min.js" /></script>
-    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <link href="css/bootstrap.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="css/style.css" media="screen" rel="stylesheet" type="text/css">
-    <link href="css/animate.css" media="screen" rel="stylesheet" type="text/css">
-    <script type="text/javascript">
-          // Add some global variables about current user if we need them:
-            var currentUserStatus = 'student';
-            var currentUserID = 0;
-            var settings = '';
-            var discUsers = [
-                    {
-                        'firstName' : 'Caner', 
-                        'lastName'  : 'Uguz',
-                        'userID'    : 1
-                    }
-                ] ;
-    </script>
-<style>
-.synTop .userThumbTiny {
-display: inline; 
-}
-</style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12" >
+            <header class="jumbotron subhead discjumbotron">
+                <div class="container-fluid">
+                    <div class="btn-toolbar" id="toolbox">
 
-</head>
+                        <button id="showTimeline" class="btn btn-small btn-info">Timeline</button>
 
-<body>
+                        <button id="showSynthesis" class="btn btn-small btn-warning">Connected Posts</button>
 
+                        <button id="" class="btn btn-small btn-success sayBut2" postid="0"><i class="icon-comment icon-white"></i> Say</button> <input id="dIDhidden" type="hidden" name="discID" value="">
 
-        <header class="jumbotron subhead discjumbotron">
-            <div class="container-fluid">
-                <div class="btn-toolbar" id="toolbox">
+                        <div class="btn-group" id="participantList">
+                            <button class="btn disabled ">Participants:</button>
+                        </div>
+                    </div>
 
-                    <button id="showTimeline" class="btn btn-small btn-info">Timeline</button>
-
-                    <button id="showSynthesis" class="btn btn-small btn-warning">Connected Posts</button>
-
-                    <button id="" class="btn btn-small btn-success sayBut2" postid="0"><i class="icon-comment icon-white"></i> Say</button> <input id="dIDhidden" type="hidden" name="discID" value="">
-
-                    <div class="btn-group" id="participantList">
-                        <button class="btn disabled ">Participants:</button>
+                    <div class="form-search" id="keywordSearchDiv">
+                        <input id="keywordSearchText" type="text" class="input-medium search-query" placeholder="Search in discussion">
                     </div>
                 </div>
-
-                <div class="form-search" id="keywordSearchDiv">
-                    <input id="keywordSearchText" type="text" class="input-medium search-query" placeholder="Search in discussion">
-                </div>
-            </div>
-        </header>
-
+            </header>
 
     <div id="discussionWrap" class="page" >
 
@@ -90,16 +69,16 @@ display: inline;
                         <div class="sayBut2" postid="0">
                             say <input id="dIDhidden" type="hidden" name="discID" value="">
                         </div>
--->
+--> 
 
 
-                                <h4 id="recentPostsHeader"></h4>
+                                <h4 id="recentPostsHeader">Recent Posts </h4>
 
                                 <div class="content">
                                     <ul class="discussionFeed" id="recentContent"></ul>
                                 </div>
                             </div>
-						
+            
                             <div class="dCollapse hide" id="dSynthesis">
                                 <div class="content">
                                     <div class="hide" id="addSynthesis">
@@ -119,7 +98,7 @@ Your synthesis comment...
                                     </div>
 
                                     <ul class="synthesisFeed" id="synthesisList">
-	                                    <p id="synthesisHelpText"> There are no connected posts in this discussion yet. Click on the Say button anywhere in the discussion to create one. </p>
+                                      <p id="synthesisHelpText"> There are no connected posts in this discussion yet. Click on the Say button anywhere in the discussion to create one. </p>
                                     </ul>
                                 </div>
                             </div>
@@ -138,8 +117,8 @@ Your synthesis comment...
                 <div class="span8 " id="dMain">
                     <div id="discussionDivs">
                         <div class="levelWrapper" level="0">
-                        	<img src="img/ajax-loader.gif" alt="ajax-loader" width="32" height="32" style="margin-top: 35%; margin-left: 45%">
-	                        <!-- Discussion gets built here.. -->
+                          <img src="img/ajax-loader.gif" alt="ajax-loader" width="32" height="32" style="margin-top: 35%; margin-left: 45%">
+                          <!-- Discussion gets built here.. -->
                         </div>
                     </div>
                 </div><!-- close span8 -->
@@ -209,39 +188,26 @@ Your comment...
 
 <div id="checkNewPost"></div>
 
-<script type="text/javascript">
-    // Latest itiration of 22the shiva elements through iframe
-    var sampleData = "{\"chartType\": \"BarChart\",\"areaOpacity\": \".3\",\"backgroundColor\": \"\",\"chartArea\": \"\",\"colors\": \"\",\"fontName\": \"Arial\",\"fontSize\": \"automatic\",\"hAxis\": \"\",\"legend\": \"right\",\"legendTextStyle\": \"\",\"height\": \"400\",\"isStacked\": \"true\",\"lineWidth\": \"2\",\"pointSize\": \"7\",\"series\": \"\",\"title\": \"\",\"titleTextStyle\": \"\",\"tooltipTextStyle\": \"\", \"vAxis\": \"\",\"width\": \"600\", \"dataSourceUrl\": \"https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AsMQEd_YoBWldHZNbGU2czNfa004UmpzeC13MkZZb0E&output=html\",\"query\": \"\",\"shivaGroup\": \"Visualization\"}";
-    var dscourse;
-    $(document).ready(function() {
-	//set up settings
-	settings = $.parseJSON(settings);
 
-        if (window.addEventListener)
-            window.addEventListener("message", shivaMessageHandler, false);
-        else
-            window.attachEvent("message", shivaMessageHandler);
+        </div>
+        </div>
 
-        dscourse = new Dscourse();
-        // Fasten seat belts, dscourse is starting...
-    });
+    </div>
 
-    function shivaMessageHandler(e) {
-        var msg = "Unrecognized";
-        if (e.data.indexOf("GetJSON=") == 0)
-            msg = e.data.substr(8);
-        else if (e.data.indexOf("GetType=") == 0)
-            msg = e.data.substr(8);
-        dscourse.currentDrawing = msg;
-        console.log(dscourse.currentDrawing);
-    }
 
-    function ShivaMessage(iFrameName, cmd) {
-        if (cmd.indexOf("PutJSON") == 0)
-            console.log(dscourse.currentDrawData);
-        cmd += "=" + dscourse.currentDrawData;
-        document.getElementById(iFrameName).contentWindow.postMessage(cmd, "*");
-    }
-</script>
-</body>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/timeago.jquery.js"></script>   
+    <script src="js/dscourse.js"></script>
+    
+    <script> 
+      $(function(){
+          var dscourse = new Dscourse();
+      }); 
+    </script> 
+
+  </body>
 </html>

@@ -1,0 +1,41 @@
+{ 
+	"currentUser" : {
+		"firstName" : "Caner",
+		"lastName"	: "Uguz",
+		"userid"	: 1, 
+		"userRole"	: "student",
+		"userPictureURL" : "img/thumb.png"
+	}, 
+	"users"	: [
+		{
+			"firstName" : "Ben",
+			"lastName"	: "Tucker",
+			"userId"	: 2,
+			"userPictureURL" : "img/thumb.png"
+		},
+		{
+			"firstName" : "Sara",
+			"lastName"	: "Dexter",
+			"userId"	: 3,
+			"userPictureURL" : "img/thumb.png"
+		}
+	],
+	"course" : {
+		"courseName" : "Sample Course", 
+		"courseId"	: 1
+	}, 
+	"posts" : [
+		{
+			"postID": 1,
+            "postFromId" : 0,
+            "postAuthorId" : 1,
+            "postMessage" : "This is the first post", 
+            "postType" : "comment",
+            "postSelection" : "",
+            "postMedia" : " ",
+            "postMediaType" : "draw",
+            "postContext" : "",
+            "postTime" : "2012-08-28 19:43:08"
+		}
+	]
+}
