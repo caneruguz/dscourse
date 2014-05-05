@@ -36,6 +36,18 @@
             "postMediaType" : "draw",
             "postContext" : "",
             "postTime" : "2012-08-28 19:43:08"
+		}, 
+		{
+			"postID": 2,
+            "postFromId" : 1,
+            "postAuthorId" : 1,
+            "postMessage" : "Another post", 
+            "postType" : "comment",
+            "postSelection" : "",
+            "postMedia" : " ",
+            "postMediaType" : "draw",
+            "postContext" : "",
+            "postTime" : "2012-08-28 19:43:08"
 		}
 	]
 }

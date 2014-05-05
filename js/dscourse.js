@@ -8,6 +8,7 @@ function Dscourse() {
     // Main discussion data wrapper
     this.data = new Array();
     this.currentUserID = 0; 
+    this.colors = [];
 
     // Options for what to show and hide etc. 
     this.options = {
@@ -21,8 +22,732 @@ function Dscourse() {
 
     // Run initializing functions
     this.GetData();
+ 
+   /************************ DISCUSSION EVENTS  ************************/
+    /* Make the commenting box draggable */
+    $('#commentWrap').prepend($('<div>', {
+        class : 'commentWrapHandle'
+    }));
+    $('#commentWrap').draggable({
+        handle : '.commentWrapHandle'
+    });
+
+    /* Add highlighted text to the comment */
+    $(document).on('mouseup', '#highlightShow', function() {
+        var spannedText = $(this).find('span').text();
+        //remove highlight from text
+        $(this).find('span').replaceWith(spannedText);
+        top.currentSelected = top.GetSelectedText();
+        var element = document.getElementById("highlightShow");
+        var range = top.GetSelectedLocation(element);
+        top.currentStart = range.start;
+        top.currentEnd = range.end;
+        $('#locationIDhidden').val(top.currentStart + ',' + top.currentEnd);
+        // Add location value to form value;
+        var replaceText = $('#highlightShow').html();
+        var newSelected = '<span class="highlight">' + top.currentSelected + '</span>';
+        var n = replaceText.substring(0,range.start)+newSelected+replaceText.substring(range.end);
+        $('#highlightShow').html(n);
+    });
+
+    /* Tooltips */
+    $('#discussionDivs').tooltip({
+        selector : "span",
+        placement : 'bottom',
+        html : true
+    });
+    $('#participants').tooltip({
+        selector : "button",
+        html : true
+    });
+    $('#shivaDrawPaletteDiv').tooltip({
+        selector : "button"
+    });
+
+    /* When clicked on a post */
+    $(document).on('click', '.threadtext', function(event) {
+        event.stopPropagation();
+        $('.threadText').removeClass('highlight');
+        $('.threadText').find('span').removeClass('highlight');
+        var postClickId = $(this).closest('div').attr('level');
+        top.HighlightRelevant(postClickId);
+        $(this).removeClass('agree disagree comment offTopic clarify').addClass('highlight');
+    });
+
+    /* When mouse hovers over the post */
+    $(document).on('mouseover', '.threadtext', function(event) {
+        event.stopImmediatePropagation();
+        var postClickId = $(this).closest('div').attr('level');
+        top.HighlightRelevant(postClickId);
+        if(settings.status=="OK"){
+            $(this).children('.sayBut2').show();
+            if (!$(this).hasClass('lightHighlight')) {
+                $(this).addClass('lightHighlight');
+            }
+        }
+        $(this).find('.deletePostButton').show();
+        var aID = $(this).attr('postauthorid');
+        var pID = $(this).attr('level');
+        var time = top.GetUniformDate(top.data.posts.filter(function(a){return a.postID == pID})[0].postTime) > new Date().getTime() - (15000+1000*240);
+        if((aID == currentUserID && time)|| settings.role=="Instructor"||settings.role=="TA")        
+            $(this).find('.editPostButton').show();
+    });
+
+    /* When mouse hovers out of the post */
+    $(document).on('mouseout', '.threadtext', function(event) {
+        event.stopImmediatePropagation();
+        $(this).children('.sayBut2').hide();
+        $(this).removeClass('lightHighlight');
+        $(this).find('.deletePostButton').hide();
+        $(this).find('.editPostButton').hide();
+    });
+
+    /* When there are new posts and a refresh is required */
     
-}
+    $(document).on('click', '.refreshBox', function() {
+        $(this).hide();
+        var discID = $(this).attr('discID');
+        top.GetData();
+        // We load our new discussion with all the posts up to date
+    });
+
+    // When the main window scrolls heatmap needs to redraw
+    $('#dMain').scroll(function() {
+        top.VerticalHeatmap();
+        top.DrawShape();
+    });
+
+    /* Keyword search functionality within the discussion page */
+    $(document).on('keyup', '#keywordSearchText', function() {
+        var searchText = $('#keywordSearchText').val();
+        // get contents of the box
+        if (searchText.length > 0 && searchText != ' ') {
+            top.ClearVerticalHeatmap();
+            //console.log('Search text: ' + searchText); // Works
+            top.VerticalHeatmap('keyword', searchText);
+            // Send text to the vertical heatmap app
+        } else {
+            top.ClearKeywordSearch('#dMain');
+            top.ClearVerticalHeatmap();
+        }
+    });
+
+    /* Adding a new post to the discussion */
+    $(document).on('click', '#addPost', function() {
+        if (!top.charCount) {
+            alert('You can\'t post because you went above the character limit');
+        } else {
+            var checkDefault = $('#text').val();
+            // Check to see if the user is adding default comment text.
+            var buttonType = $('#postTypeID > .active').attr('id');
+            // If comment button has class active
+            if (buttonType == 'comment') {
+                if (checkDefault == 'Your comment...' || checkDefault == '') {
+                    $('#text').addClass('textErrorStyle');
+                    $('#textError').show();
+                } else {
+                    postOK();
+                }
+            } else {
+                postOK();
+            }
+        }
+
+        // if checks out then do it.
+        function postOK() {
+            $('.threadText').removeClass('highlight');
+            if (checkDefault == 'Why do you agree?' || checkDefault == 'Why do you disagree?' || checkDefault == 'What is unclear?' || checkDefault == 'Why is it off topic?') {
+                $('#text').val(' ');
+            }
+            top.AddPost();
+            // Function to add post
+            var discussionID = $('#dIDhidden').val();
+            $('#commentWrap').slideUp();
+            $('#overlay').hide();
+            $('#shivaDrawDiv').hide();
+            $('#shivaDrawPaletteDiv').hide();
+            top.ClearPostForm();
+            $('.threadText').removeClass('yellow');
+            top.DiscResize();
+            top.VerticalHeatmap();
+        }
+
+    });
+
+    $('#hideRefreshMsg').live('click', function () {
+        $('#checkNewPost').hide('');
+    });
+
+    /* When the comment box is clicked change the placeholder text */
+    $(document).on('click', '#text', function() {
+        var value = $('#text').val();
+        if (value == 'Why do you agree?' || value == 'Why do you disagree?' || value == 'What is unclear?' || value == 'Why is it off topic?' || value == 'Your comment...') {
+            $('#text').val('');
+        }
+    });
+
+    $('#text').on('keyup', function() {
+        var value = $('#text').val();
+        var charLength = value.length;
+        $('#charCount').html(charLength);
+        if (charLength > top.options.charLimit) {
+            $('#charCount').css('color', 'red');
+            top.charCount = false;
+        } else {
+            $('#charCount').css('color', 'black');
+            top.charCount = true;
+        }
+    });
+
+    /* When say button is clicked comment box appears and related adjustments take place */
+    $(document).on('click', '.sayBut2', function(e) {
+        var discID = $('#dIDhidden').val();
+        var dStatus = top.DiscDateStatus(discID);
+        var postID, participate; 
+            if (dStatus != 'closed') {
+                    participate = (settings.status=="OK")?true:false; 
+                    // Check if participate value if anyone or network          
+                    if(participate == true){
+                        $('#highlightDirection').hide();
+                        $('#highlightShow').hide();
+                        var postQuote = $(this).parent().children('.postTextWrap').children('.postMessageView').html();
+                        postQuote = $.trim(postQuote);
+                        var xLoc = e.pageX - 80;
+                        var yLoc = e.pageY + 10;
+                        $('#commentWrap').css({
+                            'top' : '20%',
+                            'left' : '30%'
+                        });
+                        $('.threadText').removeClass('highlight');
+                        postID = $(this).attr("postID");
+                        console.log(postID);
+                        if (postQuote != '') {
+                            $('#highlightDirection').show();
+                            $('#highlightShow').show().html(postQuote);
+                        }
+                        $('#postIDhidden').val(postID);
+                        $('#overlay').show();
+                        $('#commentWrap').fadeIn('fast');
+                        $(this).parent('.threadText').removeClass('agree disagree comment offTopic clarify').addClass('highlight');
+                        $('#text').val('Your comment...');
+                        $.scrollTo($('#commentWrap'), 400, {
+                            offset : -100
+                        });
+                          top.AddLog('discussion',discID,'SayButtonClicked',postID,' '); //postID is the parent post. 
+                    }
+            } else {
+                alert('This discussion is closed.');
+            }
+            console.log(participate);
+    });
+
+    /* When users cancels new post addition  */
+    $(document).on('click', '#postCancel', function() {
+        $('.threadText').removeClass('highlight');
+        $('#commentWrap').fadeOut();
+        $('#overlay').hide();
+        $('#shivaDrawDiv').hide();
+        $('#shivaDrawPaletteDiv').hide();
+        var postID = $('#postIDhidden').val(); 
+        top.AddLog('discussion',discID,'CancelPost',postID,' '); 
+        top.ClearPostForm();
+    });
+
+    /* When user decides to turn a comment into a synthesis post instead */
+    $(document).on('click', '#synthesize', function() {
+        $('#synthesisPostWrapper').html('');
+        // Clear existing posts
+        $('#synthesisText').val('');
+        $('#addSynthesis').removeAttr('synthesisID');
+        // Get rid of comment tab -- we need to be able to carry the content and info for this.
+        $('.threadText').removeClass('highlight');
+        $('#commentWrap').fadeOut();
+        $('#overlay').hide();
+        $('#shivaDrawDiv').hide();
+        $('#shivaDrawPaletteDiv').hide();
+        // Synthesis side
+        var synthesisFromID = $('#postIDhidden').val();
+        // Get post from ID to the global variable
+        var synthesisComment = $('#text').val();
+        // Get comment content to the global variable
+        var postQuote = $('div[level="' + synthesisFromID + '"]').children('.postTextWrap').children('.postMessageView').html();
+        // Get the post content
+        if (postQuote) {
+            postQuote = top.truncateText(postQuote, 30);
+            // Shorten the comment to one line.
+        }
+        $('#addSynthesis').show();
+        $('#editSynthesisSaveButton').hide();
+        // show editSynthesisSaveButton
+        $('#addSynthesisButton').show();
+        // hide addSynthesisButton
+
+        $('.dCollapse').hide();
+        // hide every dCollapse
+        var selector = '.dCollapse[id="dSynthesis"]';
+        $(selector).slideDown();
+        // show the item with dTab id
+
+        $('#synthesisText').val(synthesisComment);
+        // Carry over synthesis comment text
+        $('#spostIDhidden').val('0');
+        // Set default from id as 0, this can be overridden below
+
+        $('#synthesisText').on('click', function() {
+            if ($(this).val() == 'Your comment...')
+                $(this).val('');
+        });
+
+        // Populate the fields for the synthesis if the source is not top level
+        if (synthesisFromID != 0) {
+            $('#sPostIDhidden').val(synthesisFromID);
+            $('#synthesisPostWrapper').prepend('<div sPostID="' + synthesisFromID + '" class="synthesisPosts">' + postQuote + ' <div>');
+            // Append original post
+        }
+        top.ClearPostForm();
+    });
+
+    /* When user clicks on the posts inside synthesis */
+    $(document).on('click', '.synthesisPosts', function(event) {
+        event.stopImmediatePropagation();
+        var thisPost = $(this).attr('sPostID');
+        var postRef = 'div[level="' + thisPost + '"]';
+        $('#dMain').scrollTo($(postRef), 400, {
+            offset : -100
+        });
+        $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
+            $(this).removeClass('highlight animated flash').css('background-color', '#fff');
+            $(this).dequeue();
+        });
+        $('.synthesisPosts').css('background-color', '#FAFDF0')// Original background color
+        $(this).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)');
+        // Change the background color of the clicked div as well.
+    });
+
+    /* When user clicks on discuss this post on synthesis */
+    $(document).on('click', '.gotoSynthesis', function(event) {
+        event.stopImmediatePropagation();
+        var thisPost = $(this).attr('gotoID');
+        var postRef = 'div[level="' + thisPost + '"]';
+        $('#dMain').scrollTo($(postRef), 400, {
+            offset : -100
+        });
+        $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
+            $(this).removeClass('highlight animated flash').css('background-color', '#fff');
+            $(this).dequeue();
+        });
+    });
+
+    /* Adding a new synthesis post */
+    $(document).on('click', '#addSynthesisButton', function() {
+        top.AddSynthesis();
+    });
+
+    /* Adding a new synthesis post */
+    $(document).on('click', '#editSynthesisSaveButton', function() {
+        top.EditSynthesis();
+    });
+
+    /* Editing a new synthesis post */
+    $(document).on('click', '.editSynthesis', function(event) {
+        event.preventDefault();
+        if(settings.status!="OK")
+            return false;
+        $('#dSidebar').animate({
+            scrollTop : 0
+        });
+
+        // -- show the synthesis form
+        $('#synthesisPostWrapper').html('');
+        // Clear existing posts
+        $('#synthesisText').val('');
+        // Clear the comment box
+        $('#addSynthesis').show();
+        // show the form
+        $('#editSynthesisSaveButton').show();
+        // show editSynthesisSaveButton
+        $('#addSynthesisButton').hide();
+        // hide addSynthesisButton
+        // -- fill form with the post information
+        var postID = $(this).attr('sPostID');
+        for (var j = 0; j < top.data.posts.length; j++) {// Go through all the posts
+            var d = top.data.posts[j];
+            if (d.postID == postID) {
+                $('#synthesisText').val(d.postMessage);
+                // Clear the comment box
+                $('#sPostIDhidden').val(d.postFromId);
+                $('#addSynthesis').attr('synthesisID', postID);
+                top.ListSynthesisPosts(d.postContext, d.postID, 'edit');
+            }
+
+        }
+    });
+
+    /* Removing a post from synthesis */
+    $(document).on('click', '.removeSynthesisPost', function(event) {
+        event.preventDefault();
+        $(this).parent().remove();
+    });
+
+    /* Single synthesis wrapper click event */
+    $(document).on('click', '.showPosts', function() {
+        if ($(this).hasClass('on') == true) {
+            $(this).parents('.synthesisPost').children('.synthesisPosts').fadeOut();
+            // hide posts
+            $(this).removeClass('on').addClass('off');
+            // add class off
+            $(this).text('Show Posts')
+        } else {
+            $(this).parents('.synthesisPost').children('.synthesisPosts').fadeIn();
+            // show posts
+            $(this).removeClass('off').addClass('on');
+            // add class on
+            $(this).text('Hide Posts')
+        }
+
+    });
+
+    /* Show which post is synthesized */
+    $(document).on('click', '.SynthesisComponent', function() {
+        var thisPost = $(this).attr('synthesisSource');
+        var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
+        $('#dSidebar').scrollTo($(postRef), 400, {
+            offset : -100
+        });
+        $(postRef).addClass('animated flash').css('border', '3px solid red').delay(5000).queue(function() {
+            $(this).removeClass('highlight animated flash').css('border', '1px solid #ddd');
+            $(this).dequeue();
+        });
+        $('#dInfo').fadeOut();
+        // hide #dInfo
+        $('#dSynthesis').fadeIn();
+        // show #synthesis
+
+    });
+
+    /* When user cancels synthesis creation */
+    $(document).on('click', '#cancelSynthesisButton', function() {
+        $('#addSynthesis').slideUp('fast');
+        top.AddLog('discussion',discID,'Cancelsynthesis',0,' '); 
+    });
+
+    /* When user changes the option type for commenting */
+    $(document).on('click', '.postTypeOptions', function() {
+        $('.postTypeOptions').removeClass('active');
+        $(this).addClass('active');
+        var thisID = $(this).attr('id');
+        var txt = $('#text').val();
+        if (txt == 'Why do you agree?' || txt == 'Why do you agree?' || txt == 'Why do you disagree?' || txt == 'What is unclear?' || txt == 'Why is it off topic?' || txt == 'Your comment...') {// Check is the text is still the default text; we don't want to override what they wrote.
+            switch(thisID)// Get what kind of post this is
+            {
+                case 'agree':
+                    $('#text').val('Why do you agree?');
+                    break;
+                case 'disagree':
+                    $('#text').val('Why do you disagree?');
+                    break;
+                case 'clarify':
+                    $('#text').val('What is unclear?');
+                    break;
+                case 'offTopic':
+                    $('#text').val('Why is it off topic?');
+                    break;
+                default:
+                    $('#text').val('Your comment...');
+            }
+        }
+    });
+
+    /* When posttype is collapes or opened up make style changes */
+    $(document).on('click', '.postTypeWrap', function() {
+        var currentType = $(this).attr('typeID');
+        var thisLink = $(this).children('.typicn');
+        currentType = '.threadText[postTypeID="' + currentType + '"]';
+        var parentDiv = $(this).parent('div').parent('.threadText');
+        $(parentDiv).children(currentType).fadeToggle('fast', function() {
+        });
+        if (thisLink.hasClass('grey-icons') == true) {
+            thisLink.removeClass('grey-icons');
+        } else {
+            thisLink.addClass('grey-icons');
+        }
+    });
+
+    /* Add button effect to the post type information */
+    $(document).on('mousedown', '.postTypeWrap', function() {// This is just for style to make it look like a button.
+        $(this).addClass('buttonEffect');
+    });
+
+    $(document).on('mouseup', '.postTypeWrap', function() {
+        $(this).removeClass('buttonEffect');
+    });
+
+    /* When show timeline button is clicked */
+    $(document).on('click', '#showTimeline', function() {
+        $('#timeline').slideToggle().queue(function() {
+            top.DiscResize();
+            top.VerticalHeatmap();
+            $(this).dequeue();
+        });
+        if ($(this).hasClass('active') == true) {
+            $(this).removeClass('active');
+            top.AddLog('discussion',discID,'showTimeline',0,'Off');
+        } else {
+            $(this).addClass('active');
+            top.AddLog('discussion',discID,'showTimeline',0,'On');
+        }
+        top.DiscResize();
+        top.VerticalHeatmap();
+    });
+
+    /* When show synthesis button is clicked */
+    $(document).on('click', '#showSynthesis', function() {
+        $('#dInfo').fadeToggle();
+        // toggle hide sidebar content
+        $('#dSynthesis').fadeToggle();
+        if ($(this).hasClass('active') == true) {
+            $(this).html('Connected Posts');
+            $(this).removeClass('btn-primary');
+            $(this).addClass('btn-warning');
+            $(this).removeClass('active');
+            top.AddLog('discussion',discID,'showSynthesis',0,'Off');
+        } else {
+            $(this).html('Information');
+            $(this).removeClass('btn-warning');
+            $(this).addClass('btn-primary');
+            $(this).addClass('active');
+            top.AddLog('discussion',discID,'showSynthesis',0,'On');
+        }
+        if ($('dSynthesis').is(':visible')) {
+
+        } else {
+
+        }
+    });
+
+    /* When media button is clicked to show media options */
+    $(document).on('click', '#media', function() {
+        $('#commentWrap').hide();
+        $('#mediaBox').show();
+        var mHeight = $(window).height() - 200 + 'px';
+        $('#mediaWrap').html('<iframe id="node" src="http://www.viseyes.org/shiva/draw.htm" width="100%" height="' + mHeight + '" frameborder="0" marginwidth="0" marginheight="0">Your browser does not support iframes. </iframe>');
+        $('html, body').animate({
+            scrollTop : 0
+        });
+        var postID = $('#postIDhidden').val(); 
+        top.AddLog('discussion',discID,'MediaButtonClicked',postID,' '); // id is for which post it is clicked. 
+    });
+
+    /* Events to close the media section */
+    $(document).on('click', '#closeMedia', function() {
+        $('#mediaBox').hide();
+        $('#displayFrame').hide();
+        $('#commentWrap').show();
+        top.AddLog('discussion',discID,'CloseMediaPost',postID,' '); // id is for which post it is clicked. 
+    });
+
+    $(document).on('click', '#closeMediaDisplay', function() {
+        if(top.activeFilter=="keyword"){
+            if($("#keywordSearchText").val()!="")
+                $("#keywordSearchText").blur();
+        }
+        else
+             $('.uList').filter(function(){return $(this).attr('active')=="true";}).click(); 
+      
+        $('#commentWrap').hide();
+        $('#displayFrame').hide();
+        top.AddLog('discussion',discID,'CloseMediaDisplay',postID,' '); // id is for which post it is clicked. 
+    });
+
+    /* User heatmap buttons */
+    $('.uList').live('click', function() {
+        $('.uList').attr('active', false);
+        $(this).attr('active', true);
+        var uListID = $(this).attr('authorId');
+        top.ClearVerticalHeatmap();
+        top.VerticalHeatmap('user', uListID);
+    });
+
+    /* The types of comments */
+    $(document).on('click', '.drawTypes', function() {// This needs to be readded - TODO
+        top.postMediaType = 'draw';
+        var mHeight = $(window).height() - 200 + 'px';
+        $('.drawTypes').removeClass('active');
+        var drawType = $(this).attr('id');
+        // New iframe way
+        switch(drawType)// Get what kind of iframe this is
+        {
+            case 'Video':
+                type = 'video';
+                break;
+            case 'Drawing':
+                type = 'draw';
+                break;
+            case 'Map':
+                type = 'map';
+                break;
+            case 'Web':
+                type = 'webpage';
+                break;
+            default:
+                type = 'draw';
+        }
+        var html = '<iframe id="node" src="http://www.viseyes.org/shiva/' + type + '.htm" width="100%" height="' + mHeight + '" frameborder="0" marginwidth="0" marginheight="0">Your browser does not support iframes. </iframe>';
+        $('#mediaWrap').html(html);
+        top.postMediaType = type;
+        $(this).addClass('active');
+    });
+
+    /* Continue to adding post when the drawing is done. Saves drawing data into the post */
+    $(document).on('click', '#continuePost', function() {
+        top.currentDrawing = '';
+        ShivaMessage('node', 'GetJSON');
+        //console.log(top.currentDrawing);
+        $('#mediaBox').hide();
+        $('#commentWrap').show();
+        top.AddLog('discussion',discID,'MediaContinue',0,' ');
+    });
+
+    /* Cancel drawing */
+    $(document).on('click', '#drawCancel', function() {
+        top.currentDrawing = '';
+        $('#mediaBox').hide();
+        $('#commentWrap').show();
+    });
+
+    /* Adding the shiva framework for chosen media type. This is important for media drawing */
+    $(document).on('click', '.mediaMsg', function(event) {
+        event.stopImmediatePropagation();
+        var postId = $(this).closest('.threadText').attr('level');
+        top.currentDrawData = '';
+        top.currentMediaType = 'Draw';
+        var cmd;
+        $('#displayDraw').html('').append('<iframe id="displayIframe" src="http://www.viseyes.org/shiva/go.htm" width="100%" frameborder="0" marginwidth="0" marginheight="0">Your browser does not support iframes. </iframe>');
+        var i, o;
+        for ( i = 0; i < top.data.posts.length; i++) {
+            o = top.data.posts[i];
+            if (o.postID == postId) {
+                //console.log(o.postMedia);
+                cmd = "PutJSON=" + o.postMedia;
+                $('#displayFrame').show();
+                $('html, body').animate({
+                    scrollTop : 0
+                });
+            }
+            $('#displayIframe').load(function() {
+                document.getElementById('displayIframe').contentWindow.postMessage(cmd, "*");
+            }).queue(function() {
+                top.DiscResize();
+                top.VerticalHeatmap();
+                $('#containerDiv').css('width', '100% !important');
+                $(this).dequeue();
+            });
+        }
+    });
+
+    /* When items in the recent contents section are clicked */
+    $(document).on('click', '#recentContent li', function() {
+        var postID = $(this).attr('postid');
+        var postRef = 'div[level="' + postID + '"]';
+        $('#dMain').scrollTo($(postRef), 400, {
+            offset : -100
+        });
+        $(postRef).removeClass('agree disagree comment offTopic clarify').addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
+            $(this).removeClass('highlight animated flash').css('background-color', '#fff');
+            $(this).dequeue();
+        });
+    });
+
+    /*  Hide refresh message. Is this not used anymore? Check TODO */
+    $(document).on('click', '#hideRefreshMsg', function() {
+        $('#checkNewPosts').hide('');
+    });
+
+    /*  Vertical Heatmap scrolling */
+    $(document).on('click', '.vHeatmapPoint', function() {
+        var postID = $(this).attr('divpostid');
+        var postRef = 'div[level="' + postID + '"]';
+        $('#dMain').scrollTo($(postRef), 400, {
+            offset : -100
+        });
+        $(postRef).removeClass('agree disagree comment offTopic clarify').addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
+            $(this).removeClass('highlight animated flash').css('background-color', '#fff');
+            $(this).dequeue();
+        });
+        $('.vHeatmapPoint').removeClass('highlight');
+        $(this).addClass('highlight');
+    });
+
+    /* Show synthesis post numbers next to post. Needs event control, hide and show propagate. TODO */
+    $(document).on('mouseover', '.synthesisWrap', function(event) {
+        $(this).children('span').fadeIn('slow');
+    });
+
+    $(document).on('mouseout', '.synthesisWrap', function(event) {
+        $(this).children('span').fadeOut('slow');
+    });
+    
+    $(document).on('childClick', '.synthesisWrap', function(item){
+            var thisPost = item.attr('synthesissource');
+            var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
+            $('#dSidebar').scrollTo($(postRef), 400, {
+                offset : -100
+            });
+            $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
+                item.removeClass('highlight animated flash').css('background-color', 'whitesmoke');
+                item.dequeue();
+            });
+            $('#dInfo').fadeOut();
+            // hide #dInfo
+            $('#dSynthesis').fadeIn();
+            // show #synthesis
+    });
+
+    $(window).resize(function() {// When window size changes resize
+        top.DiscResize();
+        top.VerticalHeatmap();
+    });
+    
+     //Mentions
+     //prepare a list of users for the Mentions.js plugin
+    var users = $.map(discUsers, 
+        function(user){
+            return {name: user['firstName']+' '+user['lastName'], username: user.username.split('@')[0]}  
+        }
+    );
+    $('textarea').mention({
+        queryBy: ['name'],
+        sensitive: true,
+        delimiter: '@',
+        users: users,
+        typeaheadOpts: {
+            updater: function(item){
+                        //most of this is borrowed, with some hacks
+                        var data = this.query,
+                        caratPos = this.$element[0].selectionStart,
+                        i;
+                        for (i = caratPos; i >= 0; i--) {
+                            if (data[i] == '@') {
+                                break;
+                            }
+                        }
+                        var replace = data.substring(i, caratPos);
+                        var textBefore = data.substring(0, i);
+                        var textAfter = data.substring(caratPos);
+                        var u = users.filter(function(a){
+                            return a['username'] == item;
+                        })[0];
+                        data = textBefore + '@' + u['name'] + textAfter;
+                        
+                        this.tempQuery = data;
+
+                        return data;
+                    }
+        }
+    });
+
+
+} // Close dscourse function 
 
 
 Dscourse.prototype.GetData = function(discID) {
@@ -196,9 +921,9 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
 
         var showPost = 'yes';
 
-        // // Is this post part of any synthesis?
-        // var synthesis = '';
-        // synthesis = main.PostInSynthesis(d.postID);
+        // Is this post part of any synthesis?
+        var synthesis = '';
+        synthesis = main.PostInSynthesis(d.postID);
 
         if (showPost == 'yes') {
 
@@ -234,23 +959,15 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
             }
 
             var pTime = main.GetUniformDate(d.postTime);
-            //if this was posted since the user last viewed the discussion
-            if(timeSince!="never" && pTime > timeSince){
-                var t = new Date(0);
-                t.setUTCMilliseconds(main.GetUniformDate(d.postTime));
-                var prettyTime = jQuery.timeago(t);
-                var shortMessage = main.truncateText(message, 60);
-                var activityContent = '<li postid="' + d.postID + '">' + main.getAuthorThumb(d.postAuthorId, 'tiny') + ' ' + authorID + ' ' + typeText + ' <b>' + shortMessage + '</b> ' + '<em class="timeLog">' + prettyTime + '<em></li> ';
-                $('#recentContent').prepend(activityContent);
-            }
-            else if(timeSince=="never" && $('#recentContent').children().length < 9){
-                var t = new Date(0);
-                t.setUTCMilliseconds(main.GetUniformDate(d.postTime));
-                var prettyTime = jQuery.timeago(t);
-                var shortMessage = main.truncateText(message, 60);
-                var activityContent = '<li postid="' + d.postID + '">' + main.getAuthorThumb(d.postAuthorId, 'tiny') + ' ' + authorID + ' ' + typeText + ' <b>' + shortMessage + '</b> ' + '<em class="timeLog">' + prettyTime + '<em></li> ';
-                $('#recentContent').prepend(activityContent);
-            }
+
+
+            var t = new Date(0);
+            t.setUTCMilliseconds(main.GetUniformDate(d.postTime));
+            var prettyTime = jQuery.timeago(t);
+            var shortMessage = main.truncateText(message, 60);
+            var activityContent = '<li postid="' + d.postID + '">' + main.getAuthorThumb(d.postAuthorId, 'tiny') + ' ' + authorID + ' ' + typeText + ' <b>' + shortMessage + '</b> ' + '<em class="timeLog">' + prettyTime + '<em></li> ';
+            $('#recentContent').prepend(activityContent);
+            
             /********** UNIQUE PARTICIPANTS SECTION ***********/
             var arrayState = jQuery.inArray(d.postAuthorId, main.uParticipant);
             // Chech if author is in array
@@ -565,9 +1282,9 @@ Dscourse.prototype.GetUniformDate = function(date, off){
     else if(typeof date == "string"){
         date = date.replace(/-/g, '/');
         var chrome = /chrome/.test(navigator.userAgent.toLowerCase());
-        if(($.browser.safari || $.browser.msie) && !chrome)
+        if(($.browser.safari() || $.browser.msie()) && !chrome)
            d = new Date(date.split('-').join('/')).getTime();
-        else if($.browser.webkit || $.browser.mozilla)
+        else if($.browser.mozilla())
             d = new Date(date).getTime();
         else
             d = new Date(date.split(' ').join('T')).getTime();   
@@ -592,4 +1309,750 @@ Dscourse.prototype.truncateText = function(text, length) {
 
     }
 
+}
+Dscourse.prototype.scatter = function (start, stop, qty){
+            //cover base case
+            var res = [stop/2];
+            var n = 2;
+            while(res.length<qty){
+                var step = stop/(Math.pow(2,n));
+                var back = n-1;
+                var uni = [];
+                for(var i=0; i<back; i++){
+                    var pos = res[(res.length-1)-i];
+                    uni.push(pos-step);
+                    uni.push(pos+step);  
+                    if(res.length == qty)
+                        break;   
+                }
+                res= res.concat(uni);       
+                n++;
+            }   
+            return res;
+}
+
+Dscourse.prototype.ResponseCounters = function(postId) {
+    /*
+     *  Generates the html printout about how many responses each post has.
+     */
+    var main = this;
+    var comment = 0;
+    var commentPeople = '';
+    var agree = 0;
+    var agreePeople = '';
+    var disagree = 0;
+    var disagreePeople = '';
+    var clarify = 0;
+    var clarifyPeople = '';
+    var offTopic = 0;
+    var offTopicPeople = '';
+    var i, o, commentText, text;
+    for ( i = 0; i < main.data.posts.length; i++) {
+        o = main.data.posts[i];
+        if (o.postFromId == postId) {
+
+            var postAuthor = main.getName(o.postAuthorId);
+
+            switch(o.postType)// Get what kind of post this is
+            {
+                case 'agree':
+                    var d1 = agreePeople.indexOf(postAuthor);
+                    // Do not add if author already exists
+                    if (d1 == -1) {
+                        if (agreePeople.length > 0) {
+                            agreePeople += '<br />';
+                        }
+                        agreePeople += postAuthor;
+                    }
+                    agree++;
+                    break;
+                case 'disagree':
+                    var d2 = disagreePeople.indexOf(postAuthor);
+                    // Do not add if author already exists
+                    if (d2 == -1) {
+                        if (disagreePeople.length > 0) {
+                            disagreePeople += '<br />';
+                        }
+                        disagreePeople += postAuthor;
+                    }
+                    disagree++;
+                    break;
+                case 'clarify':
+                    var d3 = clarifyPeople.indexOf(postAuthor);
+                    // Do not add if author already exists
+                    if (d3 == -1) {
+                        if (clarifyPeople.length > 0) {
+                            clarifyPeople += '<br />';
+                        }
+                        clarifyPeople += postAuthor;
+                    }
+                    clarify++;
+                    break;
+                case 'offTopic':
+                    var d4 = offTopicPeople.indexOf(postAuthor);
+                    // Do not add if author already exists
+                    if (d4 == -1) {
+                        if (offTopicPeople.length > 0) {
+                            offTopicPeople += '<br />';
+                        }
+
+                        offTopicPeople += postAuthor;
+                    }
+                    offTopic++;
+                    break;
+                default:
+                    var d5 = commentPeople.indexOf(postAuthor);
+                    // Do not add if author already exists
+                    if (d5 == -1) {
+                        if (commentPeople.length > 0) {
+                            commentPeople += '<br />';
+                        }
+                        commentPeople += postAuthor;
+                    }
+                    comment++;
+            }
+        }
+    }
+    commentText = ' ', agreeText = ' ', disagreeText = ' ', clarifyText = ' ', offTopicText = ' ';
+    if (comment > 0) {
+        commentText = '<span href="#" rel="tooltip" class="postTypeWrap" typeID="comment" title="<b>Comments from: </b><br /> ' + commentPeople + '" > ' + comment + '  <span class="typicn message "></span></span>  ';
+    }
+    if (agree > 0) {
+        agreeText = '<span href="#" rel="tooltip" class="postTypeWrap" typeID="agree" title="<b>People who agreed: </b><br /> ' + agreePeople + '"> ' + agree + '  <span class="typicn thumbsUp "></span> </span> ';
+    }
+    if (disagree > 0) {
+        disagreeText = '<span href="#" rel="tooltip" class="postTypeWrap" typeID="disagree" title="<b>People who disagreed:</b><br /> ' + disagreePeople + '"> ' + disagree + '  <span class="typicn thumbsDown "></span></span> ';
+    }
+    if (clarify > 0) {
+        clarifyText = '<span href="#" rel="tooltip" class="postTypeWrap" typeID="clarify" title="<b>People that asked to clarify:</b><br /> ' + clarifyPeople + '"> ' + clarify + '  <span class="typicn unknown "></span></span> ';
+    }
+    if (offTopic > 0) {
+        offTopicText = '<span href="#" rel="tooltip" class="postTypeWrap" typeID="offTopic" title="<b>People that marked off topic: </b><br />' + offTopicPeople + '"> ' + offTopic + '  <span class="typicn forward "></span> </span>  ';
+    }
+    text = commentText + agreeText + disagreeText + clarifyText + offTopicText;
+    return text;
+}
+Dscourse.prototype.PostInSynthesis = function(postID) {
+    /*
+     *  Checks to see if this posts is in a synthesis so a notification can be drawn next to the post.
+     */
+
+    var main = this;
+    var output = '';
+    var count = 0;
+    var j, k, i, o;
+    for ( j = 0; j < main.data.posts.length; j++) {// Go through all the posts in this discussion
+        k = main.data.posts[j];
+        if (k.postContext) {// Check post context where synthesis information is
+            var posts = k.postContext.split(",");
+            // Split post content into array
+            for ( i = 0; i < posts.length; i++) {// For each posts in the array
+                o = posts[i];
+                if (o == postID) {// check if this post is synthesis in the source post
+                    output += '<span rel="tooltip" title="' + main.getName(k.postAuthorId, 'first') + '  made a connection to this post. Click to view." class="SynthesisComponent hide" synthesisSource="' + k.postID + '"><span class="typicn feed "></span></span>';
+                    count++;
+                }
+            }
+        }
+    }
+    if (count > 1) {// After collecting all the posts combine them into html output
+        $(output).off('click');
+        output = '<span class="synthesisWrap"> <b>' + count + '</b> Connections ' + output + '</span>';
+    } else if (count == 1) {
+        $(output).on('click', function(e) {
+            var thisPost = $(this).attr('synthesissource');
+            var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
+            $('#dSidebar').scrollTo($(postRef), 400, {
+                offset : -100
+            });
+            $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
+                $(this).removeClass('highlight animated flash').css('background-color', 'whitesmoke');
+                $(this).dequeue();
+            });
+            $('#dInfo').fadeOut();
+            // hide #dInfo
+            $('#dSynthesis').fadeIn();
+            // show #synthesis
+        });
+    }
+    return output;
+}
+
+Dscourse.prototype.DiscResize = function() {
+    /*
+     * Resizes component widths and heights on the discussion page
+     */
+    var main = this;
+    var h, wHeight, nbHeight, jHeight, cHeight, height;
+    // Get total height of the window with the helper function
+    //if lti use viewport instead
+
+    wHeight = $('.dscourse-wrapper').height();
+    wWidth = $('.dscourse-wrapper').width();
+    // Get height of #navbar
+    nbHeight = $('.navbar').height();
+    // Get height of jumbutron
+    jHeight = 0; //$('#discussionWrap > header').height();  
+    // Get height of #controlsWrap
+    cHeight = $('#controlsWrap').height();
+    // resize #dRowMiddle accordingly.
+    height = wHeight - (nbHeight + jHeight + cHeight + 74);
+    height = height + 'px';
+    mHeight = wHeight - (nbHeight + jHeight + cHeight + 74);
+    mHeight = -mHeight;
+    $('#dSidebar').css({
+        'height' : height,
+        'overflow-y' : 'scroll',
+        'overflow-x' : 'hidden'
+    });
+    $('#vHeatmap').css({
+        'height' : height,
+        'overflow-y' : 'hidden',
+        'overflow-x' : 'hidden'
+    });
+    $('#dMain').css({
+        'height' : height,
+        'overflow-y' : 'scroll',
+        'overflow-x' : 'hidden'
+    });
+    $('#dRowMiddle').css({
+        'margin-top' : 10
+    });
+    //jHeight+30});
+    $('#lines').css({
+        'height' : height,
+        'margin-top' : mHeight + 'px'
+    });
+    $('#mediaBox').css({
+        'height' : wHeight - 100 + 'px'
+    });
+    $('#node').css({
+        'height' : wHeight - 200 + 'px'
+    });
+    $('#homeWrapper').css({
+        'width' : wWidth - 600 + 'px'
+    });
+
+    //=== CORRECT Vertical Heatmap bars on resize  ===
+    // Each existing heatmap point needs to be readjusted in terms of height.
+    // View box calculations
+    var boxHeight = $('#vHeatmap').height();
+    // Get height of the heatmap object
+    var totalHeight = $('#dMain')[0].scrollHeight;
+    // Get height for the entire main section
+
+    $('.vHeatmapPoint').each(function() {
+        var postValue = $(this).attr('divPostID');
+        // get the divpostid value of this div
+
+        var thisOne = $(this);
+        // redraw the entire thing.
+        $('.threadText').each(function() {// Go through each post to see if postAuthorId in Divs is equal to the mapInfo
+            var postAuthor = $(this).attr('postAuthorId');
+            var postID = $(this).attr('level');
+            if (postID == postValue) {
+                var divPosition = $(this).position();
+                // get the location of this div from the top
+                //console.log(divPosition);
+                var ribbonMargin = (divPosition.top) * boxHeight / totalHeight;
+                // calculate a yellow ribbon top for the vertical heatmap
+                ribbonMargin = ribbonMargin;
+                // this correction is for better alignment of the lines with the scroll box.
+
+                // There is an error when the #dMain layer is scrolled the position value is relative so we have minus figures.
+
+                $(thisOne).css('margin-top', ribbonMargin);
+            }
+        });
+    });
+    // ==  end correct vertical heatmap
+    $('#displayFrame').css({
+        'height' : wHeight - 100 + 'px'
+    });
+    $('#displayIframe').css({
+        'height' : wHeight - 150 + 'px'
+    });
+    //Fixing the width of the threadtext
+    $('.threadText').each(function() {
+        var parentwidth = $(this).parent().width();
+        var parentheight = $(this).children('.postTextWrap').height();
+        var thiswidth = parentwidth - 42;
+        $(this).css({
+            'width' : thiswidth + 'px',
+            'padding-left' : '40px'
+        });
+        $(this).children('.postTypeView').css('width', '20px');
+        $(this).children('.sayBut2').css({
+            'width' : '30px',
+            'margin-left' : '0px',
+            'height' : parentheight + 10 + 'px'
+        });
+        $(this).children('.responseWrap').css('width', '40px');
+        $(this).children('.postTextWrap').css('width', thiswidth - 110 + 'px');
+    });
+    // main.AddLog('discussion',discID,'DiscResize',0,'Height: ' + wHeight + ' Width: ' +wWidth); This is not a good idea! It will use too much processing power
+    main.UniqueParticipants();
+}
+
+Dscourse.prototype.ClearVerticalHeatmap = function() {
+    /*
+    * Clear heatmap for reuse
+    */
+    // Check to see how clearing will function, this is probably the place for it.
+    $('#vHeatmap').html('');
+    $('#vHeatmap').append('<div id="scrollBox"> </div>');
+    // Add scrolling tool
+
+}
+
+Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
+    /*
+     * Draw the components of the heatmap
+     */
+
+    var main = this;
+    main.activeFilter = (typeof mapType !="undefined")?mapType: main.activeFilter;
+    // View box calculations
+    var boxHeight = $('#vHeatmap').height();
+    // Get height of the heatmap object
+    var visibleHeight = $('#dMain').height();
+    // Get height of visible part of the main section
+    var totalHeight = $('#dMain')[0].scrollHeight;
+    // Get height for the entire main section
+
+    // Size the box
+    var scrollBoxHeight = visibleHeight * boxHeight / totalHeight;
+    $('#scrollBox').css('height', scrollBoxHeight - 7);
+    // That gives the right relative size to the box
+
+    // Scroll box to visible area
+    var mainScrollPosition = $('#dMain').scrollTop();
+    var boxScrollPosition = mainScrollPosition * boxHeight / totalHeight;
+    $('#scrollBox').css('margin-top', boxScrollPosition);
+    // Gives the correct scrolling location to the box
+
+    if (mapType == 'user') {// if mapType is -user- mapInfo is the user ID
+        $('.threadText').filter(':visible').each(function() {// Go through each post to see if postAuthorId in Divs is equal to the mapInfo
+            var postAuthor = $(this).attr('postAuthorId');
+            var postID = $(this).attr('level');
+            if (postAuthor == mapInfo) {
+                var divPosition = $(this).position();
+                // get the location of this div from the top
+
+                // dynamically find.
+                var mainDivTop = $('#dMain').scrollTop();
+                //console.log('main div scroll: ' + mainDivTop);
+                //console.log(divPosition);
+                var ribbonMargin = (divPosition.top + mainDivTop) * boxHeight / totalHeight;
+                // calculate a yellow ribbon top for the vertical heatmap
+                //ribbonMargin = ribbonMargin; // this correction is for better alignment of the lines with the scroll box.
+
+                // There is an error when the #dMain layer is scrolled the position value is relative so we have minus figures.
+
+                $('#vHeatmap').append('<div class="vHeatmapPoint" style="margin-top:' + ribbonMargin + 'px" divPostID="' + postID + '" ></div>');
+                // append the vertical heatmap with post id and author id information (don't forgetto create an onclick for this later on)
+            }
+        });
+    }
+
+    if (mapType == 'keyword') {// if mapType is -keyword- mapInfo is the text searched
+        main.ClearKeywordSearch('#dMain');
+        //console.log(mapInfo); // Works
+        $('.threadText').each(function() {// go through each post to see if the text contains the mapInfo text
+            var postID = $(this).attr('level');
+            var postContent = $(this).children('.postTextWrap').children('.postMessageView').text();
+            //search for keyword
+            var a = postContent.search(RegExp(mapInfo, 'gi'));
+            // search for post text with the keyword text if there is a match get location information
+            if (a != -1) {
+                var divPosition = $(this).position();
+                // get the location of this div from the top
+                //console.log(divPosition);
+                var mainDivTop = $('#dMain').scrollTop();
+                var ribbonMargin = (divPosition.top + mainDivTop) * boxHeight / totalHeight;
+                // calculate a yellow ribbon top for the vertical heatmap
+                $('#vHeatmap').append('<div class="vHeatmapPoint" style="margin-top:' + ribbonMargin + 'px" divPostID="' + postID + '" ></div>');
+                // append the vertical heatmap with post id and author id information (don't forgetto create an onclick for this later on)
+               }
+                var replaceText = $(this).children('.postTextWrap').children('.postMessageView').html();
+                if(!!replaceText){
+                 // Find out if there is alreadt a span for highlighting here
+                replaceText = replaceText.replace(/(?:<span class=\"highlightblue\">|<\/span>)/gi,"");
+                replaceText = replaceText.replace(RegExp(mapInfo, 'gi'), function(capture){
+                   return "<span class=\"highlightblue\">"+capture+"</span>"; 
+                });
+               // var newSelected = '<search class="highlightblue">' + mapInfo + '</search>';
+                //var n = replaceText.replace(RegExp(mapInfo.replace(/[#-}]/gi, '\\$&'), 'g'), newSelected);
+                $(this).children('.postTextWrap').children('.postMessageView').html(replaceText);
+            }
+        });
+
+    }
+
+    main.DrawShape();
+    if(!mapInfo){mapInfo = 'null'}; if(!mapType){mapType = 'null'}; 
+    //main.AddLog('discussion',discID,'verticalHeatmap',mapInfo,mapType); This is not a good idea! It will use too much processing power
+}
+
+Dscourse.prototype.UniqueParticipants = function() {
+    /*
+     *  Returns html for unique participant buttons in the discussion Participant section.
+     */
+    var main = this;
+    var btn = $('<button>').addClass('uList');
+    $('body').append(btn);
+    var width = btn.width()+4;
+    btn.remove();
+    
+    var maxWidth =  $('#keywordSearchDiv').position().left - ($('#participantList').position().left+$('#participantList').children().eq(0).width())-50;
+    var maxIcons = Math.floor(maxWidth/width)-1;
+    
+    $('.uList').remove();
+    var i, o, name, thumb, output;
+    for ( i = 0; i < main.uParticipant.length; i++) {
+        o = main.uParticipant[i];
+        name = main.getName(o);
+        thumb = main.getAuthorThumb(o, 'small');
+        output = '<button class="btn uList" rel="tooltip" active="false" title="' + name + '" authorID="' + o + '">' + thumb + ' </button>';
+        if(i < maxIcons)
+            $('#participantList').append(output);
+        else if(i==maxIcons){
+            $('#participantList').append($('<button class="btn uList" rel="tooltip" active="false" style="height:30px;"><span style="text-align:center">ALL</span></button>').on('click', function(){
+                $('#participantListOverflow').toggle();
+            }));
+            $('#toolbox').append($('<div>',{
+                id: 'participantListOverflow'
+            }).hide());
+            $('#participantListOverflow').append(output);
+        }
+        else{
+            $('#participantListOverflow').append(output);        
+        }
+    }
+    if($('#participantListOverflow').length>0)
+        $('#participantListOverflow').css({
+                    position: 'absolute',
+                    left: $('#participantList').children().eq(1).offset().left+'px',
+                    width: maxWidth-width +'px',
+                    height: 'auto',
+                    zIndex: 1000
+         });
+}
+
+Dscourse.prototype.DrawShape = function() {
+    /*
+     * Draws the lines that connect scrollbox and the discussion window
+     */
+    var main = this;
+    // get the canvas element using the DOM
+    var canvas = document.getElementById('cLines');
+    var scrollBoxTop = $('#scrollBox').css('margin-top');
+    scrollBoxTop = scrollBoxTop.replace('px', '');
+    scrollBoxTop = Math.floor(scrollBoxTop);
+    var scrollBoxHeight = $('#scrollBox').css('height');
+    // find the height of scrollbox
+    scrollBoxHeight = scrollBoxHeight.replace('px', '');
+    scrollBoxHeight = Math.floor(scrollBoxHeight);
+    var linesHeight = $('#lines').height();
+    canvas.height = linesHeight;
+    var scrollWidth = $('#vHeatmap').width();
+    var correction = 27 - scrollWidth;
+    var scrollBoxBottom = scrollBoxHeight + scrollBoxTop;
+    // add the height to the top position to find the bottom.
+    // use getContext to use the canvas for rawing
+    var ctx = canvas.getContext('2d');
+    // Clear the drawing
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Options
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgb(179, 96, 64)';
+    // Top line
+    ctx.beginPath();
+    ctx.moveTo(scrollWidth + correction, scrollBoxTop + 1);
+    ctx.lineTo(scrollWidth + 26, 1);
+    ctx.stroke();
+    ctx.closePath();
+    // Bottom line
+    ctx.beginPath();
+    ctx.moveTo(scrollWidth + correction, scrollBoxBottom + 2);
+    ctx.lineTo(scrollWidth + 26, linesHeight - 1);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+Dscourse.prototype.DrawTimeline = function()// Draw the timeline.
+{
+    /*
+     *  Draw the timeline for the selected discussion
+     */
+    var main = this;
+
+    // Let's make the step a division between the max and min numbers.
+    var min = new Date(main.timelineMin).getTime();
+    var max = new Date(main.timelineMax).getTime();
+     var step = (max - min) / 100;
+
+    // Create the Slider
+    $("#slider-range").slider({// Create the slider
+        range : "min",
+        //step: step,
+        value : max,
+        min : min,
+        max : max,
+        slide : function(event, ui) {
+            var date = main.GetUniformDate(ui.value);
+            date = main.ToTimestamp(date);
+        date = main.FormattedDate(date); 
+            $("#amount").val(date);
+            $('.threadText').each(function(index) {
+                var threadID = $(this).attr('time');
+                if (threadID > ui.value) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
+            main.ClearVerticalHeatmap();
+            main.VerticalHeatmap('user', $('.uList[active="true"]').attr('authorid'));
+        },
+        stop : function() {
+
+        }
+    });
+
+    // Show the value on the top div for reference.
+    var initialDate = (main.ToTimestamp(main.GetUniformDate(main.timelineMax)));
+        initialDate = main.FormattedDate(initialDate); 
+
+    $("#amount").val(initialDate);
+
+    var j, d;
+    for ( j = 0; j < main.data.posts.length; j++) {// Go through all the posts
+        d = main.data.posts[j];
+        //add dot on the timeline for this post
+        var n = d.postTime;
+        n = n.replace(/-/g, "/");
+        //n = main.ParseDate(n, 'yyyy/mm/dd');
+        var time = Date.parse(n);
+        var minTime = main.timelineMin.replace(/-/g, "/");
+            minTime = Date.parse(minTime);
+        var maxTime = main.timelineMax.replace(/-/g, "/");
+            maxTime = Date.parse(maxTime);
+        var timeRange = maxTime - minTime;
+        var dotDistance = ((time - minTime) * 100) / timeRange;
+        console.log('n: ' + n + '   timeRange: ' + timeRange + '    timelineMax: ' + main.timelineMax + '     timelineMin: ' + main.timelineMin)
+        var singleDotDiv = '<div class="singleDot" style="left: ' + dotDistance + '%; "></div>';
+        $('#dots').append(singleDotDiv);
+    }
+
+}
+
+Dscourse.prototype.ToTimestamp = function(epoch){
+    var d = new Date(epoch);
+    var y = d.getFullYear();
+    var m = ("00"+(d.getMonth()+1).toString()).slice(-2);
+    var da = ("00"+d.getDate().toString()).slice(-2);
+    var h = ("00"+d.getHours().toString()).slice(-2);
+    var mi = ("00"+d.getMinutes().toString()).slice(-2);
+    var s = ("00"+d.getSeconds().toString()).slice(-2);
+    
+    return y+"-"+m+"-"+da+" "+h+":"+mi+":"+s;
+}
+
+Dscourse.prototype.FormattedDate = function(date) {
+    
+    date = date.replace(/\//g,'-');
+    // Split timestamp into [ Y, M, D, h, m, s ]
+    var b = date.split(/[- :]/);
+    var date = new Date(b[0], b[1]-1, b[2], b[3], b[4], b[5]);
+
+    var d, m, curr_hour, dateString;
+    d = new Date(0);
+    var sec = this.GetUniformDate(date);
+    d.setUTCMilliseconds(sec);
+    // Write out the date in readable form.
+    console.log(date);
+    m = d.toDateString();
+    curr_hour = d.getHours();
+    dateString = m + '  ' + curr_hour + ':00';
+    //console.log(dateString);
+    return dateString;
+}
+
+Dscourse.prototype.ClearPostForm = function() {
+    var main = this;
+    $('#commentWrap').find('input:text, input:password, input:file, select, textarea').val('');
+    $('.postBoxRadio').removeAttr('checked');
+    // Restore checked status to comment.
+    $('#postTypeID > button').removeClass('active');
+    $('#postTypeID > #comment').addClass('active');
+    $('#highlightShow').html(' ');
+    $('#text').removeClass('textErrorStyle');
+    $('#textError').hide();
+}
+
+Dscourse.prototype.AddPost = function() {
+
+    var main = this;
+    var currentDisc = $('#dIDhidden').val();
+
+    // If there are no posts in this discussion create posts array
+    if (!main.data.posts) {
+        main.data.posts = new Array();
+    }
+    
+    // Get post values from the form.
+    // postID -- postFromId
+    var postFromId = $('#postIDhidden').val();
+
+    // author ID -- postAuthorId -- this is the session user
+    var postAuthorId = $('#userIDhidden').val();
+    var postMessage = $('#text').val();
+
+    // type -- postType
+    var postType = 'comment';
+    var formVal = $('#postTypeID > .active').attr('id');
+
+    if (formVal !== undefined) {
+        postType = formVal;
+    }
+
+    // locationIDhidden -- postSelection
+    var postSelection = $('#locationIDhidden').val();
+    console.log(postSelection);
+    if (postSelection == '0,0') {// fix for firefox and fool proofing in case nothing is actually selected.
+        postSelection = '';
+    }
+
+    // Get drawing value
+    var postMedia;
+    postMedia = (main.currentDrawing!="Unrecognized")?main.currentDrawing:"";
+
+    var postContext = '';
+    // this is used for the synthesis posts but needs a value here.
+
+    // Create post object and append it to allPosts
+    
+    var post = {
+        'postFromId' : postFromId,
+        'postAuthorId' : postAuthorId,
+        'postMessage' : postMessage.replace('\'', '\\\''),
+        'postType' : postType,
+        'postSelection' : postSelection,
+        'postMedia' : postMedia,
+        'postMediaType' : main.postMediaType,
+        'postContext' : postContext
+    };
+    
+     if(/EDIT/.test(postFromId)){
+        console.log('postfromID value: ' + postFromId);
+        main.EditPost({
+            postID: postFromId.split('|||')[1],
+            postFromId : postFromId.split('|||')[2],
+            postAuthorId : postAuthorId,
+            postMessage : postMessage.replace('\'', '\\\''),
+            postType : postType,
+            postSelection : postSelection,
+            postMedia : postMedia,
+            postMediaType : main.postMediaType,
+            postContext : postContext 
+        }, currentDisc);       
+    } else {
+    // if the post is not edit then save new. 
+        $.ajax({
+        type : "POST",
+        url : "php/data.php",
+        data : {
+            post : post,
+            action : 'addPost',
+            currentDiscussion : currentDisc
+        },
+        success : function(data) {// If connection is successful .
+            post.postMessage = post.postMessage.replace(/\W/g,function(match){return match.replace('\\','');});
+            console.log(post);
+            post.postTime = main.GetCurrentDate();
+            post.postID = data;
+            main.data.posts.push(post);
+            //console.log(data);
+            console.log(data);
+
+            $('.levelWrapper[level="0"]').html('');
+            main.SingleDiscussion(currentDisc);
+            main.DiscResize();
+            main.VerticalHeatmap();
+            var divHighlight = 'div[level="' + data + '"]';
+            $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
+            $.scrollTo($(divHighlight), 400, {
+                offset : -100
+            });
+            main.AddLog('discussion',currentDisc,'addPost',data,' ');
+            
+            //extract mentions from the postBody
+            var mentions = [];
+            for(var i=0; i<discUsers.length;i++){
+            var u = discUsers[i];
+            if(RegExp('@'+u['firstName']+' '+u['lastName']).test(postMessage))
+                mentions.push(u['UserID']);
+            }
+            $.ajax({
+                type: 'POST',
+                url: 'php/data.php',
+                data:  {
+                    post: post,
+                    action: 'mention',
+                    mentions: mentions
+                },
+                success: function(data){
+                    console.log(data);
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                }
+            });
+        },
+        error : function(xhr) {// If connection is not successful.
+            main.AddLog('discussion',currentDisc,'addPost','','Error: Dscourse Log: the connection to data.php failed. ');
+            //console.log("Dscourse Log: the connection to data.php failed.");
+        }
+    });   
+    
+    
+    }
+    
+    // run Ajax to save the post object
+ 
+    main.init = false;
+
+
+Dscourse.prototype.DiscDateStatus = function(dID) {
+    /*
+     *  Checks the date to see if the discussion is active, individual participation or closed.
+     */
+    var main = this;
+    var dStatus;
+    // Get course dates:
+    var o;
+    o = main.data.discussion;
+    if (o.dID === dID) {
+        // Compare dates of the discussion to todays date.
+        var beginDate = main.GetUniformDate(o.dStartDate);
+        var openDate = main.GetUniformDate(o.dOpenDate);
+        var endDate = main.GetUniformDate(o.dEndDate);
+        var currentDate = new Date().getTime();
+        // Compare dates of the discussion to todays date. But first convert mysql dates into js
+        if (currentDate >= beginDate && currentDate <= endDate) {// IF today's date bigger than start date and smaller than end date?
+            if (currentDate <= openDate) {// If today's date smaller than Open Date
+                dStatus = 'student';
+                // The status is open to individual contribution
+            } else {
+                dStatus = 'all';
+                // The status is open to everyone
+            }
+        } else {
+            dStatus = 'closed';
+            // The status is closed.
+        }
+        return dStatus;
+    }
 }
