@@ -18,8 +18,16 @@
     <![endif]-->
   </head>
   <body>
-    <div class="container-fluid dscourse-wrapper">
-      <div class="row">
+    <div class="container ">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h1> Welcome to dscourse</h1>
+                <p class="lead"> This is the new add on version of dscourse which you can embed more easily into your existing online environments</p>
+            </div>
+        </div>
+
+        <div class="row">
         <div class="col-sx-12" >
             <header class="jumbotron subhead discjumbotron">
                 <div class="container-fluid">
@@ -29,7 +37,7 @@
 
                         <button id="showSynthesis" class="btn btn-small btn-warning">Connected Posts</button>
 
-                        <button id="" class="btn btn-small btn-success sayBut2" postid="0"><i class="icon-comment icon-white"></i> Say</button> <input id="dIDhidden" type="hidden" name="discID" value="">
+                        <button id="" class="btn btn-small btn-success sayBut2" postid="0"> <span class="typicn plus "></span>  Say</button> <input id="dIDhidden" type="hidden" name="discID" value="">
 
                         <div class="btn-group" id="participantList">
                             <button class="btn disabled ">Participants:</button>
@@ -42,90 +50,102 @@
                 </div>
             </header>
 
-    <div id="discussionWrap" class="page" >
+            <div id="discussionWrap" class="page" >
 
-        <div class="container-fluid">
-            <div class="row" id="controlsRow">
-                <div class="col-xs-12" id="dFooter">
-                    <div id="controlsWrap">
+                <div class="container-fluid">
+                    <div class="row" id="controlsRow">
+                        <div class="col-xs-12" id="dFooter">
+                            <div id="controlsWrap">
 
-                        <div id="timeline" class="">
-                            <div id="slider-range">
-                                <div id="dots"></div>
-                            </div><input type="text" id="amount">
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" id="dRowMiddle">
-                <div class="col-xs-4 ">
-                    <div id="row">
-
-                        <div class="col-xs-11" id="dSidebar">
-                            <div class="dCollapse" id="dInfo">
-                                <span class="boxHeaders"><span id="dTitleView"></span></span><br /> 
-
-                                <h4 id="recentPostsHeader">Recent Posts </h4>
-
-                                <div class="content">
-                                    <ul class="discussionFeed" id="recentContent"></ul>
+                                <div id="timeline" class="">
+                                    <div id="slider-range">
+                                        <div id="dots"></div>
+                                    </div><input type="text" id="amount">
                                 </div>
-                            </div>
-            
-                            <div class="dCollapse hide" id="dSynthesis">
-                                <div class="content">
-                                    <div class="hide" id="addSynthesis">
-                                        <input id="sPostIDhidden" type="hidden" name="sPostIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="">
-                                        <textarea id="synthesisText">
-Your synthesis comment...
-</textarea>
 
-                                        <div id="synthesisDrop" class="alert alert-info">
-                                            Drag and drop posts here to add to synthesis.
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="row" id="dRowMiddle">
+                    <div class="col-xs-4 ">
+                        <div id="row">
+                            <div class="col-xs-11" id="dSidebar">
+                                <div class="dCollapse" id="dInfo">
+                                    <span class="boxHeaders"><span id="dTitleView"></span></span><br />
+
+                                    <h4 id="recentPostsHeader">Recent Posts </h4>
+
+                                    <div class="content">
+                                        <ul class="discussionFeed" id="recentContent"></ul>
+                                    </div>
+                                </div>
+
+                                <div class="dCollapse hide" id="dSynthesis">
+                                    <div class="content">
+                                        <div class="hide" id="addSynthesis">
+                                            <input id="sPostIDhidden" type="hidden" name="sPostIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="">
+                                            <textarea id="synthesisText"> Your synthesis comment...  </textarea>
+
+                                            <div id="synthesisDrop" class="alert alert-info">
+                                                Drag and drop posts here to add to synthesis.
+                                            </div>
+
+                                            <div id="synthesisPostWrapper"></div>
+
+                                            <input id="addSynthesisButton" type="button" class="buttons btn btn-primary" value="Add Post"> <input id="editSynthesisSaveButton" type="button" class="buttons btn btn-primary hide" value="Edit Post"> <input id="cancelSynthesisButton" type="button" class="buttons btn btn-info" value="Cancel">
+                                            <hr class="soften">
                                         </div>
 
-                                        <div id="synthesisPostWrapper"></div>
-                                        
-                                        <input id="addSynthesisButton" type="button" class="buttons btn btn-primary" value="Add Post"> <input id="editSynthesisSaveButton" type="button" class="buttons btn btn-primary hide" value="Edit Post"> <input id="cancelSynthesisButton" type="button" class="buttons btn btn-info" value="Cancel">
-                                        <hr class="soften">
+                                        <ul class="synthesisFeed" id="synthesisList">
+                                          <p id="synthesisHelpText"> There are no connected posts in this discussion yet. Click on the Say button anywhere in the discussion to create one. </p>
+                                        </ul>
                                     </div>
-
-                                    <ul class="synthesisFeed" id="synthesisList">
-                                      <p id="synthesisHelpText"> There are no connected posts in this discussion yet. Click on the Say button anywhere in the discussion to create one. </p>
-                                    </ul>
                                 </div>
+                            </div><!-- close span11 -->
+                            <div class="col-xs-1" id="vHeatmap">
+                                <div id="scrollBox"></div>
                             </div>
-                        </div><!-- close span11 -->
-                        <div class="col-xs-1" id="vHeatmap">
-                            <div id="scrollBox"></div>
-                        </div>
 
-                        <div id="lines">
-                            <canvas id="cLines"></canvas>
-                        </div>
-                        
-                    </div><!-- close row -->
-                </div><!-- close span4 -->
+                            <div id="lines">
+                                <canvas id="cLines"></canvas>
+                            </div>
 
-                <div class="span8 " id="dMain">
-                    <div id="discussionDivs">
-                        <div class="levelWrapper" level="0">
-                          <img src="img/ajax-loader.gif" alt="ajax-loader" width="32" height="32" style="margin-top: 35%; margin-left: 45%">
-                          <!-- Discussion gets built here.. -->
+                        </div><!-- close row -->
+                    </div><!-- close span4 -->
+
+                    <div class="col-xs-8 " id="dMain">
+                        <div id="discussionDivs">
+                            <div class="levelWrapper" level="0">
+                              <img src="img/ajax-loader.gif" alt="ajax-loader" width="32" height="32" style="margin-top: 35%; margin-left: 45%">
+                              <!-- Discussion gets built here.. -->
+                            </div>
                         </div>
-                    </div>
-                </div><!-- close span8 -->
-            </div><!-- close row -->
+                    </div><!-- close span8 -->
+                </div><!-- close row -->
 
             <div id="commentWrap">
-                <input id="postIDhidden" type="hidden" name="postIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="userid">
 
+                <input id="postIDhidden" type="hidden" name="postIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="userid">
+                <div class="commentWrapHandle"></div>
                 <div id="top">
                     <div id="quick">
-                        <div class="btn-group" id="postTypeID">
-                            <button class="btn postTypeOptions active" id="comment"> <span class="typicn message "></span>Comment</button> <button class="btn postTypeOptions" id="agree"> <span class="typicn thumbsUp "></span> Agree</button> <button class="btn postTypeOptions" id="disagree"> <span class="typicn thumbsDown "></span> Disagree</button> <button class="btn postTypeOptions" id="clarify"> <span class="typicn unknown "></span> Ask to Clarify</button> <button class="btn postTypeOptions" id="offTopic"> <span class="typicn forward "></span> Off Topic</button>
+                        <div class="btn-group btn-group-justified btn-group-sm" id="postTypeID">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info postTypeOptions active" id="comment"> <span class="typicn message "></span>Comment</button>
+                            </div>
+                            <div class="btn-group">
+                                 <button type="button" class="btn btn-info postTypeOptions" id="agree"> <span class="typicn thumbsUp "></span> Agree</button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info postTypeOptions" id="disagree"> <span class="typicn thumbsDown "></span> Disagree</button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info postTypeOptions" id="clarify"> <span class="typicn unknown "></span> Ask to Clarify</button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info postTypeOptions" id="offTopic"> <span class="typicn forward "></span> Off Topic</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -143,11 +163,10 @@ Your synthesis comment...
                         <div id="textError">
                             If you are commenting you need to enter a comment.
                         </div>
-                        <textarea id="text">
-Your comment...
-</textarea>
-<div class="pull-right">Characters: <span id="charCount">0</span> <span id="charCountTotal"></span> </div>
-                    </div><button id="media" class="btn btn-small btn-danger">Add Media</button> <button id="synthesize" class="btn btn-small btn-warning">Connect</button>
+                        <textarea id="text">Your comment...</textarea>
+                        <div class="pull-right">Characters: <span id="charCount">0</span> <span id="charCountTotal"></span> </div>
+                    </div>
+                    <button id="media" class="btn btn-small btn-danger">Add Media</button> <button id="synthesize" class="btn btn-small btn-warning">Connect</button>
                 </div>
 
                 <div id="bottom">
@@ -193,12 +212,13 @@ Your comment...
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="js/jquery-ui-1.8.21.custom.min.js"></script>   
+    <script src="js/jquery-ui-1.10.4.min.js"></script>
   
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="js/timeago.jquery.js"></script>   
+    <script src="js/jquery.scrollTo-min.js"></script>
+    <script src="js/timeago.jquery.js"></script>
     <script src="js/jqbrowser.js"></script>  
     <script src="js/dscourse.js"></script>
     
