@@ -62,22 +62,22 @@ function Dscourse() {
     });
 
     /* When clicked on a post */
-    $(document).on('click', '.threadText', function(event) {
-        console.log('hi');
-        event.stopPropagation();
-        $('.threadText').removeClass('highlight');
-        $('.threadText').find('span').removeClass('highlight');
-        var postClickId = $(this).closest('div').attr('level');
-        top.HighlightRelevant(postClickId);
-        $(this).removeClass('agree disagree comment offTopic clarify').addClass('highlight');
-    });
+//    $(document).on('click', '.threadText', function(event) {
+//        console.log('hi');
+//        event.stopImmediatePropagation();
+//        $('.threadText').removeClass('highlight');
+//        $('.threadText').find('span').removeClass('highlight');
+//        var postClickId = $(this).closest('div').attr('level');
+//        top.HighlightRelevant(postClickId);
+//        $(this).removeClass('agree disagree comment offTopic clarify').addClass('highlight');
+//    });
 
     /* When mouse hovers over the post */
     $(document).on('mouseover', '.threadText', function(event) {
         event.stopImmediatePropagation();
         var postClickId = $(this).closest('div').attr('level');
         top.HighlightRelevant(postClickId);
-        $(this).children('.sayBut2').show();
+        $(this).children('.sayBut2').css('display', 'inline');
         if (!$(this).hasClass('lightHighlight')) {
             $(this).addClass('lightHighlight');
         }
@@ -197,14 +197,15 @@ function Dscourse() {
     });
 
     /* When say button is clicked comment box appears and related adjustments take place */
-    $(document).on('click', '.sayBut2', function(e) {
+    $(document).on('click', '.sayBut2', function() {
+        var postQuote;
         var postID;
+         console.log('werwrwerewr');
         $('#highlightDirection').hide();
         $('#highlightShow').hide();
-        var postQuote = $(this).parent().children('.postTextWrap').children('.postMessageView').html();
+        postQuote = $(this).parents('div').parent('div').parent('div').children('.postTextWrap').children('.postMessageView').html();
+        console.log(postQuote);
         postQuote = $.trim(postQuote);
-        var xLoc = e.pageX - 80;
-        var yLoc = e.pageY + 10;
         $('#commentWrap').css({
             'top' : '20%',
             'left' : '30%'
@@ -447,7 +448,7 @@ function Dscourse() {
         var currentType = $(this).attr('typeID');
         var thisLink = $(this).children('.typicn');
         currentType = '.threadText[postTypeID="' + currentType + '"]';
-        var parentDiv = $(this).parent('div').parent('.threadText');
+        var parentDiv = $(this).parents('.threadText');
         $(parentDiv).children(currentType).fadeToggle('fast', function() {
         });
         if (thisLink.hasClass('grey-icons') == true) {
@@ -800,7 +801,7 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
     main.timelineMin = 0;
     main.timelineMax = 0;
     // Clear timeline range
-    $('#participantList').html('<button class="btn disabled">Participants: </button>');
+    $('#participantList').html('<button class="btn btn-sm disabled">Participants: </button>');
     // Clear participant list
     var j, p, d, q, typeText, authorID, message, authorThumb, synthesisCount;
     
@@ -913,22 +914,22 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
             $(selector).append(// Add post data to the view
             		'<div class="threadText ' + topLevelMessage + '" level="' + d.postID + '" postTypeID="' + d.postType + '" postAuthorId="' + d.postAuthorId + '" time="' + time + ' ">'
             		+  '<div class="postTypeView" slevel="' + d.postID + '"> ' + typeText + '</div>' 
-            		+  '<div class="postTextWrap">'
-            			 + '<span class="postAuthorView" rel="tooltip"  title="' + authorThumb + '"> ' + authorID + '</span>' 
-            			 + '<span class="postMessageView"> ' + message + '</span>'
+            		+ '<div class="postTopRow"><span class="postAuthorView" rel="tooltip"  title="' + authorThumb + '"> ' + authorID + '</span><div class="postMeta"> <span class="postMetaBtn replyPost sayBut2" postID="' + d.postID + '"> <span class="typicn plus "></span>  Reply </span><div class="postMetaBtn responseWrap" >' + responses + '</div></div></div>'
+                        +  '<div class="postTextWrap">'
+            			             			 + '<span class="postMessageView"> ' + message + '</span>'
             			 + ((userRole == 'Instructor' || userRole == "TA")?'<i class="icon-trash deletePostButton" style="float:right; position:relative;top: 3px"></i>':'') 
             			 + '<i class="icon-edit editPostButton" style="float:right; position: relative;top:3px; right:5px"></i>'
             			 + media + selection + synthesis 
             		 + '</div>' 
-            		 + ' <button class="btn btn-small btn-success sayBut2" style="display:none" postID="' + d.postID + '"> <span class="typicn plus "></span>  </button> '
-            		  + '<div class="responseWrap" >' + responses + '</div>' 
+            		 //+ ' <button class="btn btn-sm btn-success sayBut2" style="display:none" postID="' + d.postID + '"> <span class="typicn plus "></span>  </button> '
+
             		+ '</div>'
             );
 
             /********** SYNTHESIS POSTS ***********/
             if (d.postType == 'synthesis') {
                 if ((currentUserID == d.postAuthorId) || (userRoleAuthor == 'Instructor' || userRoleAuthor == 'TA')) {
-                    var editPostButton = '<button class="btn btn-small editSynthesis" sPostID="' + d.postID + '">Edit</button> ';
+                    var editPostButton = '<button class="btn btn-sm editSynthesis" sPostID="' + d.postID + '">Edit</button> ';
                 } else {
                     var editPostButton = '';
                 }
@@ -1500,9 +1501,14 @@ Dscourse.prototype.DiscResize = function() {
     // Each existing heatmap point needs to be readjusted in terms of height.
     // View box calculations
     var boxHeight = $('#vHeatmap').height();
+    var boxWidth = $('#vHeatmap').width();
     // Get height of the heatmap object
     var totalHeight = $('#dMain')[0].scrollHeight;
     // Get height for the entire main section
+
+    $('#scrollBox').css({
+        'width' : boxWidth + 'px'
+    });
 
     $('.vHeatmapPoint').each(function() {
         var postValue = $(this).attr('divPostID');
@@ -1523,8 +1529,8 @@ Dscourse.prototype.DiscResize = function() {
                 // this correction is for better alignment of the lines with the scroll box.
 
                 // There is an error when the #dMain layer is scrolled the position value is relative so we have minus figures.
-
-                $(thisOne).css('margin-top', ribbonMargin);
+                console.log(boxWidth);
+                $(thisOne).css({'margin-top': ribbonMargin, 'width' : boxWidth + 'px'});
             }
         });
     });
@@ -1539,7 +1545,7 @@ Dscourse.prototype.DiscResize = function() {
     $('.threadText').each(function() {
         var parentwidth = $(this).parent().width();
         var parentheight = $(this).children('.postTextWrap').height();
-        var thiswidth = parentwidth - 42;
+        var thiswidth = parentwidth - 2;
         $(this).css({
             'width' : thiswidth + 'px',
             'padding-left' : '40px'
@@ -1547,8 +1553,8 @@ Dscourse.prototype.DiscResize = function() {
         $(this).children('.postTypeView').css('width', '20px');
         $(this).children('.sayBut2').css({
             'width' : '30px',
-            'margin-left' : '0px',
             'height' : parentheight + 10 + 'px'
+
         });
         $(this).children('.responseWrap').css('width', '40px');
         $(this).children('.postTextWrap').css('width', thiswidth - 110 + 'px');
@@ -1576,6 +1582,7 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
     main.activeFilter = (typeof mapType !="undefined")?mapType: main.activeFilter;
     // View box calculations
     var boxHeight = $('#vHeatmap').height();
+    var boxWidth = $('#vHeatmap').width();
     // Get height of the heatmap object
     var visibleHeight = $('#dMain').height();
     // Get height of visible part of the main section
@@ -1584,7 +1591,7 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
 
     // Size the box
     var scrollBoxHeight = visibleHeight * boxHeight / totalHeight;
-    $('#scrollBox').css('height', scrollBoxHeight - 7);
+    $('#scrollBox').css({'height': scrollBoxHeight, 'width' : boxWidth + 'px'});
     // That gives the right relative size to the box
 
     // Scroll box to visible area
@@ -1594,6 +1601,7 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
     // Gives the correct scrolling location to the box
 
     if (mapType == 'user') {// if mapType is -user- mapInfo is the user ID
+        console.log('vertica heatmap: user');
         $('.threadText').filter(':visible').each(function() {// Go through each post to see if postAuthorId in Divs is equal to the mapInfo
             var postAuthor = $(this).attr('postAuthorId');
             var postID = $(this).attr('level');
@@ -1603,15 +1611,15 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
 
                 // dynamically find.
                 var mainDivTop = $('#dMain').scrollTop();
-                //console.log('main div scroll: ' + mainDivTop);
-                //console.log(divPosition);
+                console.log('main div scroll: ' + mainDivTop);
+                console.log(divPosition);
                 var ribbonMargin = (divPosition.top + mainDivTop) * boxHeight / totalHeight;
                 // calculate a yellow ribbon top for the vertical heatmap
-                //ribbonMargin = ribbonMargin; // this correction is for better alignment of the lines with the scroll box.
+                ribbonMargin = ribbonMargin; // this correction is for better alignment of the lines with the scroll box.
 
                 // There is an error when the #dMain layer is scrolled the position value is relative so we have minus figures.
 
-                $('#vHeatmap').append('<div class="vHeatmapPoint" style="margin-top:' + ribbonMargin + 'px" divPostID="' + postID + '" ></div>');
+                $('#vHeatmap').append('<div class="vHeatmapPoint" style="margin-top:' + ribbonMargin + 'px; width: '+boxWidth+'px" divPostID="' + postID + '" ></div>');
                 // append the vertical heatmap with post id and author id information (don't forgetto create an onclick for this later on)
             }
         });
@@ -1717,7 +1725,7 @@ Dscourse.prototype.DrawShape = function() {
     var linesHeight = $('#lines').height();
     canvas.height = linesHeight;
     var scrollWidth = $('#vHeatmap').width();
-    var correction = 27 - scrollWidth;
+    var correction = 26 - scrollWidth;
     var scrollBoxBottom = scrollBoxHeight + scrollBoxTop;
     // add the height to the top position to find the bottom.
     // use getContext to use the canvas for rawing
@@ -1731,13 +1739,13 @@ Dscourse.prototype.DrawShape = function() {
     // Top line
     ctx.beginPath();
     ctx.moveTo(scrollWidth + correction, scrollBoxTop + 1);
-    ctx.lineTo(scrollWidth + 26, 1);
+    ctx.lineTo(45, 1);
     ctx.stroke();
     ctx.closePath();
     // Bottom line
     ctx.beginPath();
-    ctx.moveTo(scrollWidth + correction, scrollBoxBottom + 2);
-    ctx.lineTo(scrollWidth + 26, linesHeight - 1);
+    ctx.moveTo(scrollWidth + correction, scrollBoxBottom -1);
+    ctx.lineTo(45, linesHeight - 1);
     ctx.stroke();
     ctx.closePath();
 }
