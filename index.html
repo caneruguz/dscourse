@@ -7,8 +7,7 @@
     <title>Dscourse as Add on </title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/dscourse.css" rel="stylesheet">
+    <link href="dscourse/dscourse.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,187 +26,11 @@
             </div>
         </div>
 
-        <div class="row">
-        <div class="col-sm-12" >
-            <header class="jumbotron subhead discjumbotron">
-                <div class="container-fluid">
-                    <div class="btn-toolbar" id="toolbox">
-                        <div class="btn-group">
-                            <button id="showSynthesis" class="btn btn-sm btn-warning">Connected Posts</button>
-                            <button id="" class="btn btn-sm btn-success sayBut2" postid="0"> <span class="typicn plus "></span>  Post </button> <input id="dIDhidden" type="hidden" name="discID" value="">
-                        </div>
 
-                        <div class="btn-group" id="participantList">
-                            <button class="btn disabled btn-sm">Participants:</button>
-                        </div>
-                    </div>
-
-                    <div class="form-search" id="keywordSearchDiv">
-                        <input id="keywordSearchText" type="text" class="form-control input-sm search-query" placeholder="Search in discussion">
-                    </div>
-                </div>
-            </header>
-
-            <div id="discussionWrap" class="page" >
-                <div class="row" id="controlsRow">
-                    <div class="col-xs-12" id="dFooter">
-                        <div id="controlsWrap">
-
-                            <div id="timeline" class="">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <div id="slider-range">
-                                            <div id="dots"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input type="text" id="amount">
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row" id="dRowMiddle">
-                    <div class="col-xs-4 ">
-                        <div id="row">
-                            <div class="col-xs-9" id="dSidebar">
-                                <div class="dCollapse" id="dInfo">
-                                    <h4 id="recentPostsHeader">Recent Posts </h4>
-
-                                    <div class="content">
-                                        <ul class="discussionFeed" id="recentContent"></ul>
-                                        <ul class="discussionFeed" id="recentContent"></ul>
-                                    </div>
-                                </div>
-
-                                <div class="dCollapse" id="dSynthesis" style="display:none;">
-                                    <h4 id="recentPostsHeader">Connected Posts</h4>
-                                    <div class="content">
-                                        <div id="addSynthesis" style="display:none">
-                                            <input id="sPostIDhidden" type="hidden" name="sPostIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="">
-                                            <textarea id="synthesisText"> Your synthesis comment...  </textarea>
-
-                                            <div id="synthesisDrop" class="alert alert-info">
-                                                Drag and drop posts here to add to synthesis.
-                                            </div>
-
-                                            <div id="synthesisPostWrapper"></div>
-
-                                            <input id="addSynthesisButton" type="button" class="buttons btn btn-primary" value="Add Post"> <input id="editSynthesisSaveButton" type="button" class="buttons btn btn-primary hide" value="Edit Post"> <input id="cancelSynthesisButton" type="button" class="buttons btn btn-info" value="Cancel">
-                                            <hr class="soften">
-                                        </div>
-
-                                        <ul class="synthesisFeed" id="synthesisList">
-                                          <p id="synthesisHelpText"> There are no connected posts in this discussion yet. Click on the Say button anywhere in the discussion to create one. </p>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div><!-- close span11 -->
-                            <div class="col-xs-3">
-                                <div id="vHeatmap">
-                                    <div id="scrollBox"></div>
-                                    </div>
-                            </div>
-
-                            <div id="lines">
-                                <canvas id="cLines"></canvas>
-                            </div>
-
-                        </div><!-- close row -->
-                    </div><!-- close span4 -->
-
-                    <div class="col-xs-8 ">
-                        <div id="dMain">
-
-                        <div id="discussionDivs">
-                            <div class="levelWrapper" level="0">
-                                <img src="img/ajax-loader.gif" alt="ajax-loader" width="32" height="32" style="margin-top: 35%; margin-left: 45%">
-                                <!-- Discussion gets built here.. -->
-                            </div>
-                        </div>
-                        </div>
-
-                    </div><!-- close span8 -->
-                </div><!-- close row -->
-
-            <div id="commentWrap">
-
-                <input id="postIDhidden" type="hidden" name="postIDhidden" value=""> <input id="userIDhidden" type="hidden" name="userIDhidden" value="userid">
-                <div class="commentWrapHandle"></div>
-                <div id="top">
-                    <div id="quick">
-                        <div class="btn-group  btn-group-sm" id="postTypeID">
-                            <button type="button" class=" btn btn-info postTypeOptions active" id="comment"> <span class="typicn message "></span>Comment</button>
-                            <button type="button" class="btn btn-info postTypeOptions" id="agree"> <span class="typicn thumbsUp "></span> Agree</button>
-                             <button type="button" class="btn btn-info postTypeOptions" id="disagree"> <span class="typicn thumbsDown "></span> Disagree</button>
-                            <button type="button" class="btn btn-info postTypeOptions" id="clarify"> <span class="typicn unknown "></span> Ask to Clarify</button>
-                             <button type="button" class="btn btn-info postTypeOptions" id="offTopic"> <span class="typicn forward "></span> Off Topic</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="middle">
-                    <input id="locationIDhidden" type="hidden" name="locationIDhidden" value="">
-
-                    <div id="commentArea">
-                        <div id="highlightDirection">
-                            Select a specific segment of the text to reference it in your post.
-                        </div>
-
-                        <div id="highlightShow"></div>
-
-                        <div id="textError">
-                            If you are commenting you need to enter a comment.
-                        </div>
-                        <textarea id="text">Your comment...</textarea>
-                        <div class="pull-right">Characters: <span id="charCount">0</span> <span id="charCountTotal"></span> </div>
-                    </div>
-                    <button id="media" class="btn btn-sm btn-danger">Add Media</button> <button id="synthesize" class="btn btn-sm btn-warning">Connect</button>
-                </div>
-
-                <div id="bottom">
-                    <div id="buttons">
-                        <input type="button" id="postCancel" class="buttons btn btn-sm btn-info" value="Cancel"> <input id="addPost" type="button" class="buttons btn btn-sm btn-primary" value="Add to dscourse">
-                    </div>
-                </div>
-            </div><!-- close commentWrap -->
-
-            <div id="mediaBox">
-                <a class="close" data-dismiss="alert" href="#" id="closeMedia">&times;</a>
-
-                <div id="mediaTools">
-                    <div id="drawGroup" class="btn-group">
-                        <button class="btn btn-sm drawTypes" id="Web">Link</button> <button class="btn btn-sm drawTypes" id="Document">Document</button> <button class="btn btn-sm drawTypes" id="Video">Video</button> <button class="btn btn-sm drawTypes active" id="Drawing">Drawing</button> <button class="btn btn-sm drawTypes" id="Map">Map</button>
-                    </div>
-
-                    <div id="mediaButtons" class="pull-right">
-                        <button id="drawCancel" class="btn btn-info">Cancel</button> <button id="continuePost" class="btn btn-primary">Continue posting</button>
-                    </div>
-                </div>
-
-                <div id="mediaWrap"></div>
-            </div><!-- close mediabox -->
-
-            <div id="displayFrame">
-                <a class="close" href="#" id="closeMediaDisplay">&times;</a>
-
-                <div id="displayDraw"></div>
-            </div>
-        </div><!-- close container -->
-    </div><!-- End individual discussion page -->
-
-<div id="checkNewPost"></div>
+       <div id="dscourse"></div>
 
 
         </div>
-        </div>
-
-    </div>
-
-
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -215,11 +38,13 @@
   
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Dscourse specific files -->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="js/jquery.scrollTo-min.js"></script>
-    <script src="js/timeago.jquery.js"></script>
-    <script src="js/jqbrowser.js"></script>  
-    <script src="js/dscourse.js"></script>
+    <script src="dscourse/plugins/jquery.scrollTo-min.js"></script>
+    <script src="dscourse/plugins/timeago.jquery.js"></script>
+    <script src="dscourse/plugins/jqbrowser.js"></script>
+    <script src="dscourse/dscourse.js"></script>
     
     <script>
         var sampleData = "{\"chartType\": \"BarChart\",\"areaOpacity\": \".3\",\"backgroundColor\": \"\",\"chartArea\": \"\",\"colors\": \"\",\"fontName\": \"Arial\",\"fontSize\": \"automatic\",\"hAxis\": \"\",\"legend\": \"right\",\"legendTextStyle\": \"\",\"height\": \"400\",\"isStacked\": \"true\",\"lineWidth\": \"2\",\"pointSize\": \"7\",\"series\": \"\",\"title\": \"\",\"titleTextStyle\": \"\",\"tooltipTextStyle\": \"\", \"vAxis\": \"\",\"width\": \"600\", \"dataSourceUrl\": \"https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AsMQEd_YoBWldHZNbGU2czNfa004UmpzeC13MkZZb0E&output=html\",\"query\": \"\",\"shivaGroup\": \"Visualization\"}";
@@ -232,14 +57,7 @@
           } else {
               window.attachEvent("message", shivaMessageHandler);
           }
-
-
-
-
           dscourse = new Dscourse();
-
-
-
 
       });
 
