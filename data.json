@@ -23,7 +23,7 @@
 			"firstName" : "Sara",
 			"lastName"	: "Dexter",
 			"userId"	: 3,
-			"userPictureURL" : "img/thumb.png"
+			"userPictureURL" : ""
 		}
 	],
 	"course" : {
@@ -35,19 +35,19 @@
 			"postID": 1,
             "postFromId" : 0,
             "postAuthorId" : 1,
-            "postMessage" : "This is the first post", 
+            "postMessage" : "This is the first post",
             "postType" : "comment",
             "postSelection" : "",
             "postMedia" : " ",
             "postMediaType" : "draw",
             "postContext" : "",
             "postTime" : "2013-04-28 19:43:08"
-		}, 
+		},
 		{
 			"postID": 2,
             "postFromId" : 1,
-            "postAuthorId" : 1,
-            "postMessage" : "Another post", 
+            "postAuthorId" : 2,
+            "postMessage" : "Another post",
             "postType" : "comment",
             "postSelection" : "",
             "postMedia" : " ",
@@ -58,7 +58,7 @@
         {
             "postID": 3,
             "postFromId" : 0,
-            "postAuthorId" : 2,
+            "postAuthorId" : 1,
             "postMessage" : "Something else here",
             "postType" : "agree",
             "postSelection" : "",
@@ -66,6 +66,31 @@
             "postMediaType" : "draw",
             "postContext" : "",
             "postTime" : "2013-09-28 19:43:08"
+        },
+        {
+            "postID": 4,
+            "postFromId" : 1,
+            "postAuthorId" : 2,
+            "postMessage" : "If you look at the way Android is headed, says Horowitz, KitKat was intentionally designed to run on lower memory, so the Moto G and Moto E have very long lives ahead of them. The sales pitch from Motorola couldn't be simpler: fast and responsive software, matched by reliable updates, encapsulated in a durable, customizable device.",
+            "postType" : "agree",
+            "postSelection" : "25,70",
+            "postMedia" : " ",
+            "postMediaType" : "draw",
+            "postContext" : "",
+            "postTime" : "2013-10-28 19:43:08"
+        },
+        {
+            "postID": 5,
+            "postFromId" : 2,
+            "postAuthorId" : 3,
+            "postMessage" : "construction doesn't feel downmarket at all, and it maintains the same curved shape as the other Moto phones. Its back covers are interchangeable and it has a microSD card slot, adding an extra bit of versatility and a potential upgrade path for the most price-sensitive buyers. You can see more of the new handset in the images",
+            "postType" : "agree",
+            "postSelection" : "25,70",
+            "postMedia" : " ",
+            "postMediaType" : "draw",
+            "postContext" : "",
+            "postTime" : "2013-11-11 19:43:08"
         }
+
     ]
 }
