@@ -88,12 +88,10 @@ function Dscourse() {
             $(this).addClass('lightHighlight');
         }
 
-        $(this).find('.deletePostButton').show();
         var aID = $(this).attr('postauthorid');
         var pID = $(this).attr('level');
         var time = top.GetUniformDate(top.data.posts.filter(function(a){return a.postID == pID})[0].postTime) > new Date().getTime() - (15000+1000*240);
-        if((aID == top.currentUserID && time)|| top.currentUserRole=="Instructor"|| top.currentUserRole=="TA")
-            $(this).find('.editPostButton').show();
+        if((aID == top.currentUserID && time)|| top.currentUserRole=="Instructor"|| top.currentUserRole=="TA");
     });
 
     /* When mouse hovers out of the post */
@@ -101,12 +99,9 @@ function Dscourse() {
         event.stopImmediatePropagation();
         $(this).children('.sayBut2').hide();
         $(this).removeClass('lightHighlight');
-        $(this).find('.deletePostButton').hide();
-        $(this).find('.editPostButton').hide();
     });
 
     /* When there are new posts and a refresh is required */
-    
     $(document).on('click', '.refreshBox', function() {
         $(this).hide();
         var discID = $(this).attr('discID');
@@ -114,11 +109,7 @@ function Dscourse() {
         // We load our new discussion with all the posts up to date
     });
 
-    // When the main window scrolls heatmap needs to redraw
-    $('#dMain').scroll(function() {
-        top.VerticalHeatmap();
-        top.DrawShape();
-    });
+
 
     /* Keyword search functionality within the discussion page */
     $(document).on('keyup', '#keywordSearchText', function() {
@@ -174,7 +165,6 @@ function Dscourse() {
             }
             top.AddPost();
             // Function to add post
-            var discussionID = $('#dIDhidden').val();
             $('#commentWrap').slideUp();
             $('#overlay').hide();
             $('#shivaDrawDiv').hide();
@@ -195,7 +185,7 @@ function Dscourse() {
         }
     });
 
-    $('#text').on('keyup', function() {
+    $(document).on('keyup', '#text', function() {
         var value = $('#text').val();
         var charLength = value.length;
         $('#charCount').html(charLength);
@@ -691,6 +681,12 @@ Dscourse.prototype.loadDscourse = function() {
     var main = this;
     $( "#dscourse" ).load( "dscourse/dscourse.html", function() {
         main.GetData();
+        // When the main window scrolls heatmap needs to redraw
+        $('#dMain').on('scroll', function() {
+            console.log('move');
+            main.VerticalHeatmap();
+            main.DrawShape();
+        });
     });
 
 
@@ -724,6 +720,90 @@ Dscourse.prototype.GetData = function() {
 
 };
 
+Dscourse.prototype.DeletePost = function(postID) {
+    /*
+     *	Deletes posts from the server
+     */
+
+    var main = this;
+    $.ajax({
+        type: 'POST',
+        url: 'php/data.php',
+        data: {
+            action: 'deletePost',
+            postID: postID
+        },
+        success: function(data){
+            //remove deleted post
+            main.data.posts = main.data.posts.filter(function(a){
+                return parseInt(a.postID) != data;
+            });
+            main.RebuildPosts();
+//            //re-draw
+//            main.SingleDiscussion();
+//            main.DiscResize();
+//            main.VerticalHeatmap();
+        },
+        error: function(xhr){
+            console.log(xhr);
+        }
+    });
+};
+
+Dscourse.prototype.EditPost= function(post, cDisc){
+    var main = this;
+
+    $.ajax({// Add user to the database with php.
+        type : "POST",
+        url : "php/data.php",
+        data : {
+            action : 'editPost',
+            post : post
+        },
+        success : function(pID) {
+            for (var j = 0; j < main.data.posts.length; j++) {  // Go through all the posts
+                var o = main.data.posts[j];
+                if(o.postID == post.postID){
+                    console.log('========================================');
+                    console.log(o);
+                    console.log(post);
+                    o.postFromId		= post.postFromId,
+                        o.postAuthorId		= post.postAuthorId,
+                        o.postMessage		= post.postMessage,
+                        o.postType			= post.postType,
+                        o.postSelection		= post.postSelection,
+                        o.postMedia			= post.postMedia,
+                        o.postMediaType		= post.postMediaType,
+                        o.postContext		= post.postContext
+                }
+            }
+
+            main.RebuildPosts();
+        },
+        error : function(xhr, status) {// If there was an error
+            console.log('There was an error talking to data.php');
+            console.log(xhr);
+            console.log(status);
+        }
+    });
+
+};
+
+Dscourse.prototype.RebuildPosts = function() {
+    /*
+     *	Rebuild discussion page as changes happen
+     */
+    var main = this;
+
+    $('.levelWrapper[level="0"]').html('');
+    main.SingleDiscussion();
+    main.DiscResize();
+    main.VerticalHeatmap();
+
+};
+
+
+
 Dscourse.prototype.SingleDiscussion = function() {
     /*
      *	Prints out the components of the discussion page. Has multiple dependancies on other functions in Dscourse object.
@@ -750,8 +830,7 @@ Dscourse.prototype.SingleDiscussion = function() {
     }
 };
 
-Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Individual discussions.
-{
+Dscourse.prototype.ListDiscussionPosts = function(userRole) {
     /*
      *	Lists posts for the discussion. This is the main function that builds the post view
      */
@@ -877,11 +956,9 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
             $(selector).append(// Add post data to the view
             		'<div class="threadText ' + topLevelMessage + '" level="' + d.postID + '" postTypeID="' + d.postType + '" postAuthorId="' + d.postAuthorId + '" time="' + time + ' ">'
             		+  '<div class="postTypeView" slevel="' + d.postID + '"> ' + typeText + '</div>' 
-            		+ '<div class="postTopRow"><span class="postAuthorView" rel="tooltip"  title="' + authorThumb + '"> ' + authorID + '</span><div class="postMeta"> <span class="postMetaBtn replyPost sayBut2" postID="' + d.postID + '"> <span class="typicn plus "></span>  Reply </span><div class="postMetaBtn responseWrap" >' + responses + '</div></div></div>'
+            		+ '<div class="postTopRow"><span class="postAuthorView" rel="tooltip"  title="' + authorThumb + '"> ' + authorID + '</span><div class="postMeta"> <span class="postMetaBtn replyPost sayBut2" postID="' + d.postID + '"> <span class="glyphicon glyphicon-plus"></span>  Reply </span><div class="postMetaBtn responseWrap" >' + responses + '</div> <div class="postMetaBtn" > ' + ((userRole == 'Instructor' || userRole == "TA")?'<i class="glyphicon glyphicon-trash deletePostButton" ></i>':'') + ' <i class="glyphicon glyphicon-edit editPostButton"></i> </div>' + '   </div></div>'
                         +  '<div class="postTextWrap">'
-            			             			 + '<span class="postMessageView"> ' + message + '</span>'
-            			 + ((userRole == 'Instructor' || userRole == "TA")?'<i class="icon-trash deletePostButton" style="float:right; position:relative;top: 3px"></i>':'') 
-            			 + '<i class="icon-edit editPostButton" style="float:right; position: relative;top:3px; right:5px"></i>'
+            			      + '<span class="postMessageView"> ' + message + '</span>'
             			 + media + selection + synthesis 
             		 + '</div>' 
             		 //+ ' <button class="btn btn-sm btn-success sayBut2" style="display:none" postID="' + d.postID + '"> <span class="typicn plus "></span>  </button> '
@@ -891,11 +968,11 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
 
             /********** SYNTHESIS POSTS ***********/
             if (d.postType == 'synthesis') {
-//                if ((currentUserID == d.postAuthorId) || (userRoleAuthor == 'Instructor' || userRoleAuthor == 'TA')) {
-//                    var editPostButton = '<button class="btn btn-sm editSynthesis" sPostID="' + d.postID + '">Edit</button> ';
-//                } else {
-//                    var editPostButton = '';
-//                }
+                if ((currentUserID == d.postAuthorId) || (userRoleAuthor == 'Instructor' || userRoleAuthor == 'TA')) {
+                    var editPostButton = '<button class="btn btn-sm editSynthesis" sPostID="' + d.postID + '">Edit</button> ';
+                } else {
+                    var editPostButton = '';
+                }
 
                 $('#synthesisList').prepend('<div class="synthesisPost " sPostID="' + d.postID + '"><span class="postAuthorView" rel="tooltip" > ' + authorThumb + '</span>' + '		<p class="synthesisP">' + message + '</p>' + '		<div class="synthesisButtonWrap"> <button class="gotoSynthesis btn btn-xs" gotoID="' + d.postID + '"> Go to Post </button><button class="showPosts btn btn-xs">Show Posts</button></div>' + '	</div>');
                 main.ListSynthesisPosts(d.postContext, d.postID, 'add');
@@ -924,103 +1001,51 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
     };// End looping through posts
     
     $('.deletePostButton').on('click', function(){
-       var del = confirm("Are you sure you would like to delete this post? This option is irreversible."); 
-       if(del){
-            $.ajax({
-                type: 'POST',
-                url: 'php/data.php',
-                data: {
-                    action: 'delete',
-                    context: 'post',
-                    contextID: $(this).parent().parent().attr('level')
-                },
-                success: function(data){
-                    //remove deleted post
-                    main.data.posts = main.data.posts.filter(function(a){
-                       return parseInt(a.postID) != data; 
-                    });
-                    //re-draw
-                    var currentDisc = $('#dIDhidden').val();
-                    main.SingleDiscussion();
-                    main.DiscResize();
-                    main.VerticalHeatmap();                 
-                },
-                error: function(xhr){
-                    console.log(xhr);    
-                }
-            })    
+       var del = confirm("Are you sure you would like to delete this post? This option is irreversible.");
+        var postID =  $(this).parent().parent().attr('level')
+        console.log(postID);
+        if(del){
+           main.DeletePost(postID);
        }
     });
-    $('.deletePostButton').hide();
+
+
     $('.editPostButton').on('click', function(e){
-        var parentPostID = $(this).parent().parent().attr('level');
+        var parentPostID = $(this).closest('.threadText').attr('level');
+        console.log(parentPostID);
         var parentPost = main.data.posts.filter(function(a){return a.postID == parentPostID})[0];
-        /* can't put spans in a <textarea> 
-        var colors = ['#FFFFB1', '#D8FFB1', '#B1FFB1', '#B1FFD8', '#B1FFFF', '#B1D8FF', '#B1B1FF', '#D8B1FF', '#FFB1FF', '#FFB1D8', '#FFB1B1', '#FFD8B1'];
-        var highlights = $(this).closest('.threadText').find('.postTypeView').filter(function(){
-            var a  = this;
-            var those = main.data.posts.filter(function(b){
-                return b.postID == $(a).attr('slevel')
-            });
-            return those[0].postSelection != '';
-        }).map(function(){
-            var a = this;
-            return main.data.posts.filter(function(b){
-               return b.postID==$(a).attr('slevel');
-           }).map(function(a){
-               var sel = a.postSelection.split(','); 
-               return {start: sel[0], stop: sel[1]}
-           }); 
+        var postID, fromId;
+
+        // Check if participate value if anyone or network
+        $('#highlightDirection').hide();
+        $('#highlightShow').hide();
+        var postQuote = $(this).parent().children('.postTextWrap').children('.postMessageView').html();
+        postQuote = $.trim(postQuote);
+        $('#commentWrap').css({
+            'top' : '20%',
+            'left' : '30%'
         });
-        $.each(highlights, function(i, val){
-           parentPostMessage = parentPostMessage.substring(0,val.start)+
-           '<span class="highlight" style="background-color:'+colors[i]+'">'
-           +parentPostMessage.substring(val.start, val.stop)
-           +'</span>'
-           +parentPostMessage.substring(val.stop);
+        $('.threadText').removeClass('highlight');
+
+        fromId = $(this).parent().parent().parent().attr('level');
+        postID =  "EDIT|||"+$(this).parent().parent().attr('level')+'|||'+fromId;
+
+        if (postQuote != '') {
+            $('#highlightDirection').show();
+            $('#highlightShow').show().html(postQuote);
+        }
+        top.currentReplyPost = postID ;
+        $('#overlay').show();
+        $('#commentWrap').fadeIn('fast');
+        $(this).parent('.threadText').removeClass('agree disagree comment offTopic clarify').addClass('highlight');
+        $('#text').val(parentPost.postMessage);
+        $.scrollTo($('#commentWrap'), 400, {
+            offset : -100
         });
-        */
-        var discID = $('#dIDhidden').val();
-        var dStatus = main.DiscDateStatus(discID);
-        var postID, participate, fromId; 
-            if (dStatus != 'closed') {
-                    participate = (settings.status=="OK");
-                    // Check if participate value if anyone or network          
-                    if(participate == true){
-                        $('#highlightDirection').hide();
-                        $('#highlightShow').hide();
-                        var postQuote = $(this).parent().children('.postTextWrap').children('.postMessageView').html();
-                        postQuote = $.trim(postQuote);
-                        var xLoc = e.pageX - 80;
-                        var yLoc = e.pageY + 10;
-                        $('#commentWrap').css({
-                            'top' : '20%',
-                            'left' : '30%'
-                        });
-                        $('.threadText').removeClass('highlight');
-                        
-                        fromId = $(this).parent().parent().parent().attr('level'); 
-                        postID =  "EDIT|||"+$(this).parent().parent().attr('level')+'|||'+fromId;
-                        
-                        if (postQuote != '') {
-                            $('#highlightDirection').show();
-                            $('#highlightShow').show().html(postQuote);
-                        }
-                        top.currentReplyPost = postID ;
-                        $('#overlay').show();
-                        $('#commentWrap').fadeIn('fast');
-                        $(this).parent('.threadText').removeClass('agree disagree comment offTopic clarify').addClass('highlight');
-                        $('#text').val(parentPost.postMessage);
-                        $.scrollTo($('#commentWrap'), 400, {
-                            offset : -100
-                        });
-                    }
-            } else {
-                alert('This discussion is closed.');
-            }
+
+
     });        
-    $('.editPostButton').hide();
-    
+
     if($("#recentContent").children().length==0){
         $("#recentPostsHeader").html("Recent posts");
         $("#recentContent").append('<span>There are no new posts since you last visited</span>');
@@ -1098,7 +1123,6 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole)// View for the Indiv
     }
 }
 
-
 Dscourse.prototype.getName = function(id, type) {
     /*
      *	Returns name of the user from ID
@@ -1156,7 +1180,8 @@ Dscourse.prototype.getAuthorThumb = function(id, size) {
             }
         }
     }
-}
+};
+
 Dscourse.prototype.PostInSynthesis = function(postID) {
     /*
      *	Checks to see if this posts is in a synthesis so a notification can be drawn next to the post.
@@ -1229,41 +1254,36 @@ Dscourse.prototype.GetUniformDate = function(date, off){
         d-=diff*60000;
     }
     return d;
-}
+};
 
 Dscourse.prototype.truncateText = function(text, length) {
-
     if (text.length < length) {
         return text;
     } else {
-
-        var myString = text;
-        var myTruncatedString = myString.substring(0, length) + '... ';
-        return myTruncatedString;
-
+        return text.substring(0, length) + '... ';
     }
+};
 
-}
 Dscourse.prototype.scatter = function (start, stop, qty){
-            //cover base case
-            var res = [stop/2];
-            var n = 2;
-            while(res.length<qty){
-                var step = stop/(Math.pow(2,n));
-                var back = n-1;
-                var uni = [];
-                for(var i=0; i<back; i++){
-                    var pos = res[(res.length-1)-i];
-                    uni.push(pos-step);
-                    uni.push(pos+step);  
-                    if(res.length == qty)
-                        break;   
-                }
-                res= res.concat(uni);       
-                n++;
-            }   
-            return res;
-}
+    //cover base case
+    var res = [stop/2];
+    var n = 2;
+    while(res.length<qty){
+        var step = stop/(Math.pow(2,n));
+        var back = n-1;
+        var uni = [];
+        for(var i=0; i<back; i++){
+            var pos = res[(res.length-1)-i];
+            uni.push(pos-step);
+            uni.push(pos+step);
+            if(res.length == qty)
+                break;
+        }
+        res= res.concat(uni);
+        n++;
+    }
+    return res;
+};
 
 Dscourse.prototype.ResponseCounters = function(postId) {
     /*
@@ -1365,7 +1385,8 @@ Dscourse.prototype.ResponseCounters = function(postId) {
     }
     text = commentText + agreeText + disagreeText + clarifyText + offTopicText;
     return text;
-}
+};
+
 Dscourse.prototype.PostInSynthesis = function(postID) {
     /*
      *  Checks to see if this posts is in a synthesis so a notification can be drawn next to the post.
@@ -1410,7 +1431,7 @@ Dscourse.prototype.PostInSynthesis = function(postID) {
         });
     }
     return output;
-}
+};
 
 Dscourse.prototype.DiscResize = function() {
     /*
@@ -1436,11 +1457,6 @@ Dscourse.prototype.DiscResize = function() {
     $('#vHeatmap').css({
         'height' : height+'px',
         'overflow-y' : 'hidden',
-        'overflow-x' : 'hidden'
-    });
-    $('#dMain').css({
-        'height' : height+'px',
-        'overflow-y' : 'scroll',
         'overflow-x' : 'hidden'
     });
     $('#dRowMiddle').css({
@@ -1523,18 +1539,14 @@ Dscourse.prototype.DiscResize = function() {
         $(this).children('.postTextWrap').css('width', thiswidth - 65 + 'px');
     });
     main.UniqueParticipants();
-}
+};
 
 Dscourse.prototype.ClearVerticalHeatmap = function() {
     /*
     * Clear heatmap for reuse
     */
-    // Check to see how clearing will function, this is probably the place for it.
-    $('#vHeatmap').html('');
-    $('#vHeatmap').append('<div id="scrollBox"> </div>');
-    // Add scrolling tool
-
-}
+    $('#vHeatmap').html('').append('<div id="scrollBox"> </div>');
+};
 
 Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
     /*
@@ -1624,7 +1636,7 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
 
     main.DrawShape();
     if(!mapInfo){mapInfo = 'null'}; if(!mapType){mapType = 'null'}; 
-}
+};
 
 Dscourse.prototype.UniqueParticipants = function() {
     /*
@@ -1632,11 +1644,13 @@ Dscourse.prototype.UniqueParticipants = function() {
      */
     var main = this;
     var btn = $('<button>').addClass('uList');
+    var pflow = $('#participantListOverflow');
+    var plist = $('#participantList');
     $('body').append(btn);
     var width = btn.width()+4;
     btn.remove();
     
-    var maxWidth =  $('#keywordSearchDiv').position().left - ($('#participantList').position().left+$('#participantList').children().eq(0).width())+50;
+    var maxWidth =  $('#keywordSearchDiv').position().left - (plist.position().left+plist.children().eq(0).width())+50;
     var maxIcons = Math.floor(maxWidth/width)-1;
     
     $('.uList').remove();
@@ -1661,15 +1675,15 @@ Dscourse.prototype.UniqueParticipants = function() {
             $('#participantListOverflow').append(output);        
         }
     }
-    if($('#participantListOverflow').length>0)
-        $('#participantListOverflow').css({
-                    position: 'absolute',
-                    left: $('#participantList').children().eq(1).offset().left+'px',
-                    width: maxWidth-width +'px',
-                    height: 'auto',
-                    zIndex: 1000
+    if(pflow.length>0)
+        pflow.css({
+            position: 'absolute',
+            left: $('#participantList').children().eq(1).offset().left+'px',
+            width: maxWidth-width +'px',
+            height: 'auto',
+            zIndex: 1000
          });
-}
+};
 
 Dscourse.prototype.DrawShape = function() {
     /*
@@ -1874,23 +1888,37 @@ Dscourse.prototype.AddPost = function() {
         'postContext' : postContext
     };
 
-    // if the post is not edit then save new.
-    post.postMessage = post.postMessage.replace(/\W/g,function(match){return match.replace('\\','');});
-    post.postTime = main.GetCurrentDate();
-    post.postID = main.data.posts[main.data.posts.length-1].postID+1;
-    main.data.posts.push(post);
 
-    $('.levelWrapper[level="0"]').html('');
-    main.SingleDiscussion();
-    main.DiscResize();
-    main.VerticalHeatmap();
+    if(/EDIT/.test(postFromId)){
+        console.log('postfromID value: ' + postFromId);
+        main.EditPost({
+            postID: postFromId.split('|||')[1],
+            postFromId : postFromId.split('|||')[2],
+            postAuthorId : postAuthorId,
+            postMessage : postMessage.replace('\'', '\\\''),
+            postType : postType,
+            postSelection : postSelection,
+            postMedia : postMedia,
+            postMediaType : main.postMediaType,
+            postContext : postContext
+        }, currentDisc);
+    } else {
+        // if the post is not edit then save new.
+        post.postMessage = post.postMessage.replace(/\W/g,function(match){return match.replace('\\','');});
+        post.postTime = main.GetCurrentDate();
+        post.postID = main.data.posts[main.data.posts.length-1].postID+1;
+        main.data.posts.push(post);
+    }
+
+    main.RebuildPosts();
     var divHighlight = 'div[level="' + post.postID + '"]';
+    console.log(divHighlight);
     $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
-    $.scrollTo($(divHighlight), 400, {
+    $('#dMain').scrollTo($(divHighlight), 400, {
         offset : -100
         });
 
-}
+};
 
 Dscourse.prototype.DiscDateStatus = function(dID) {
     /*
@@ -2085,13 +2113,10 @@ Dscourse.prototype.AddSynthesis = function() {// Revise for synthesis posts
 
     $('#addSynthesis').slideUp('fast');   // Slide up the form, it will be cleared when new synthesis is created
     $('#synthesisList').html(' '); 			// Empty synthesis list
-    $('.levelWrapper[level="0"]').html('');  // Empty discussion
-    main.SingleDiscussion();		// Rebuild the page
-    main.DiscResize();						// Rebuild the sizes of object
-    main.VerticalHeatmap();					// Rebuild the heatmap
+    main.RebuildPosts();
     var divHighlight = 'div[level="' + post.postID + '"]';
     $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
-    $.scrollTo($(divHighlight), 400, {
+    $('#dMain').scrollTo($(divHighlight), 400, {
         offset : -100
     });
 
@@ -2112,10 +2137,7 @@ Dscourse.prototype.AddSynthesis = function() {// Revise for synthesis posts
 //
 //            $('#addSynthesis').slideUp('fast');   // Slide up the form, it will be cleared when new synthesis is created
 //            $('#synthesisList').html(' '); 			// Empty synthesis list
-//            $('.levelWrapper[level="0"]').html('');  // Empty discussion
-//            main.SingleDiscussion(currentDisc);		// Rebuild the page
-//            main.DiscResize();						// Rebuild the sizes of object
-//            main.VerticalHeatmap();					// Rebuild the heatmap
+//            main.RebuildPosts();
 //            var divHighlight = 'div[level="' + data + '"]';
 //            $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
 //            $.scrollTo($(divHighlight), 400, {
@@ -2203,10 +2225,7 @@ Dscourse.prototype.EditSynthesis = function() {// Revise for synthesis posts
             /*
              $('#addSynthesis').slideUp('fast');   // Hide the form
              console.log('is this happening?');
-             $('.levelWrapper[level="0"]').html(''); // redraw the discussion page at synthesis
-             main.SingleDiscussion(currentDisc);
-             main.DiscResize();
-             main.VerticalHeatmap();
+             main.RebuildPosts();
              */
 
         },
@@ -2215,7 +2234,6 @@ Dscourse.prototype.EditSynthesis = function() {// Revise for synthesis posts
             console.log("Dscourse Log: the connection to data.php failed. Did not edit synthesis");
         }
     });
-    main.AddLog('discussion',discID,'EditSynthesis',editPostID,' ');
 
 };
 

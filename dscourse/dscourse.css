@@ -447,6 +447,9 @@ border-left: none;
 position: relative;
     padding: 0 15px;
     margin-left: -35px;
+    height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #dFooter {
@@ -582,6 +585,7 @@ position: relative;
     border-radius: 3px;
     font-size: 10px;
     font-weight: bold;
+    display: inline;
 }
 
 .postTextWrap {

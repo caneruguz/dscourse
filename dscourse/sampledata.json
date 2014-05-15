@@ -3,7 +3,7 @@
 		"firstName" : "Caner",
 		"lastName"	: "Uguz",
 		"userId"	: 1,
-		"userRole"	: "student",
+		"userRole"	: "Instructor",
 		"userPictureURL" : ""
 	}, 
 	"users"	: [
