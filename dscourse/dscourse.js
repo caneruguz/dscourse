@@ -3,27 +3,16 @@
 */
 
 function Dscourse() {
-    //Done : Adjust showing and hiding subposts, as well as the reply, they are not getting the correct jquery resources because of location change.
-    //TODO: Finalize Connected posts: 2 Connected posts does not take you to their original location. Show and hide posts quirky behavior. clicking on connected post itself should take you there.
-    //Done : Add Media
-    //Done: Search reset
-    // TODO: Make responsive
-    // TODO: Add delete
-    // TODO: Clean up api connections
-    // TODO: Visual enhancements
-    // TODO: Code clean up
-
-
     // Set global variables
     var top = this;
     // Main discussion data wrapper
-    this.data = new Array();
+    this.data = [];
 
     this.colors = [];
     this.currentUserID = 0;
     this.currentUserRole = 'student';
     this.currentDrawing = '';
-    this.currentMediaType = '';
+    //this.currentMediaType = '';
     this.postMediaType = 'draw';
     this.currentReplyPost = 0;
     // Options for what to show and hide etc.
@@ -33,7 +22,7 @@ function Dscourse() {
         infoPanel : true,
         media : true,
         timeline : true
-    }
+    };
 
 
     // Run initializing functions
@@ -57,10 +46,11 @@ function Dscourse() {
         top.currentEnd = range.end;
         $('#locationIDhidden').val(top.currentStart + ',' + top.currentEnd);
         // Add location value to form value;
-        var replaceText = $('#highlightShow').html();
+        var hShow = $('#highlightShow');
+        var replaceText = hShow.html();
         var newSelected = '<span class="highlight">' + top.currentSelected + '</span>';
         var n = replaceText.substring(0,range.start)+newSelected+replaceText.substring(range.end);
-        $('#highlightShow').html(n);
+        hShow.html(n);
     });
 
     /* Tooltips */
