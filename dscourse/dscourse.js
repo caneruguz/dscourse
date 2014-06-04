@@ -12,13 +12,13 @@ function Dscourse() {
     this.currentUserID = 0;
     this.currentUserRole = 'student';
     this.currentDrawing = '';
-    //this.currentMediaType = '';
     this.postMediaType = 'draw';
     this.currentReplyPost = 0;
+    this.uParticipant = [];
     // Options for what to show and hide etc.
     this.options = {
         charLimit : 500,
-        synthesis : true,
+        synthesis : false,
         infoPanel : true,
         media : true,
         timeline : true
@@ -80,8 +80,8 @@ function Dscourse() {
 
         var aID = $(this).attr('postauthorid');
         var pID = $(this).attr('level');
-        var time = top.GetUniformDate(top.data.posts.filter(function(a){return a.postID == pID})[0].postTime) > new Date().getTime() - (15000+1000*240);
-        if((aID == top.currentUserID && time)|| top.currentUserRole=="Instructor"|| top.currentUserRole=="TA");
+        //var time = top.GetUniformDate(top.data.posts.filter(function(a){return a.postID == pID})[0].postTime) > new Date().getTime() - (15000+1000*240);
+        //if((aID == top.currentUserID && time)|| top.currentUserRole=="Instructor"|| top.currentUserRole=="TA");
     });
 
     /* When mouse hovers out of the post */
@@ -161,7 +161,6 @@ function Dscourse() {
             $('#shivaDrawPaletteDiv').hide();
             top.ClearPostForm();
             $('.threadText').removeClass('yellow');
-            top.DiscResize();
             top.VerticalHeatmap();
         }
 
@@ -210,7 +209,7 @@ function Dscourse() {
             $('#highlightShow').show().html(postQuote);
         }
         top.currentReplyPost = postID;
-        $('#overlay').show();
+
         $('#commentWrap').fadeIn('fast');
         $(this).parent('.threadText').removeClass('agree disagree comment offTopic clarify').addClass('highlight');
         $('#text').val('Your comment...');
@@ -230,185 +229,6 @@ function Dscourse() {
         top.ClearPostForm();
     });
 
-    /* When user decides to turn a comment into a synthesis post instead */
-    $(document).on('click', '#synthesize', function() {
-        $('#synthesisPostWrapper').html('');
-        // Clear existing posts
-        $('#synthesisText').val('');
-        $('#addSynthesis').removeAttr('synthesisID');
-        // Get rid of comment tab -- we need to be able to carry the content and info for this.
-        $('.threadText').removeClass('highlight');
-        $('#commentWrap').fadeOut();
-        $('#overlay').hide();
-        $('#shivaDrawDiv').hide();
-        $('#shivaDrawPaletteDiv').hide();
-        // Synthesis side
-        var synthesisFromID = top.currentReplyPost;
-        console.log('synthesisFromID: ' + synthesisFromID);
-        // Get post from ID to the global variable
-        var synthesisComment = $('#text').val();
-        console.log('synthesisComment: ' + synthesisComment)
-        // Get comment content to the global variable
-        var postQuote = $('div[level="' + synthesisFromID + '"]').children('.postTextWrap').children('.postMessageView').html();
-        console.log('postQuote: ' + postQuote)
-        // Get the post content
-        if (postQuote) {
-            postQuote = top.truncateText(postQuote, 30);
-            // Shorten the comment to one line.
-        }
-        $('#addSynthesis').show();
-        $('#editSynthesisSaveButton').hide();
-        // show editSynthesisSaveButton
-        $('#addSynthesisButton').show();
-        // hide addSynthesisButton
-
-        $('.dCollapse').hide();
-        // hide every dCollapse
-        var selector = '.dCollapse[id="dSynthesis"]';
-        $(selector).slideDown();
-        // show the item with dTab id
-
-        $('#synthesisText').val(synthesisComment);
-        // Carry over synthesis comment text
-        top.currentReplyPost = 0;
-        // Set default from id as 0, this can be overridden below
-
-        $('#synthesisText').on('click', function() {
-            if ($(this).val() == 'Your comment...')
-                $(this).val('');
-        });
-
-        // Populate the fields for the synthesis if the source is not top level
-        if (synthesisFromID != 0) {
-            top.currentReplyPost = synthesisFromID;
-            $('#synthesisPostWrapper').prepend('<div sPostID="' + synthesisFromID + '" class="synthesisPosts">' + postQuote + ' <div>');
-            // Append original post
-        }
-        top.ClearPostForm();
-    });
-
-    /* When user clicks on the posts inside synthesis */
-    $(document).on('click', '.synthesisPosts', function(event) {
-        event.stopImmediatePropagation();
-        var thisPost = $(this).attr('sPostID');
-        var postRef = 'div[level="' + thisPost + '"]';
-        $('#dMain').scrollTo($(postRef), 400, {
-            offset : -100
-        });
-        $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
-            $(this).removeClass('highlight animated flash').css('background-color', '#fff');
-            $(this).dequeue();
-        });
-        $('.synthesisPosts').css('background-color', '#FAFDF0')// Original background color
-        $(this).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)');
-        // Change the background color of the clicked div as well.
-    });
-
-    /* When user clicks on discuss this post on synthesis */
-    $(document).on('click', '.gotoSynthesis', function(event) {
-        event.stopImmediatePropagation();
-        var thisPost = $(this).attr('gotoID');
-        var postRef = 'div[level="' + thisPost + '"]';
-        $('#dMain').scrollTo($(postRef), 400, {
-            offset : -100
-        });
-        $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
-            $(this).removeClass('highlight animated flash').css('background-color', '#fff');
-            $(this).dequeue();
-        });
-    });
-
-    /* Adding a new synthesis post */
-    $(document).on('click', '#addSynthesisButton', function() {
-        top.AddSynthesis();
-    });
-
-    /* Adding a new synthesis post */
-    $(document).on('click', '#editSynthesisSaveButton', function() {
-        top.EditSynthesis();
-    });
-
-    /* Editing a new synthesis post */
-    $(document).on('click', '.editSynthesis', function(event) {
-        event.preventDefault();
-        if(settings.status!="OK")
-            return false;
-        $('#dSidebar').animate({
-            scrollTop : 0
-        });
-
-        // -- show the synthesis form
-        $('#synthesisPostWrapper').html('');
-        // Clear existing posts
-        $('#synthesisText').val('');
-        // Clear the comment box
-        $('#addSynthesis').show();
-        // show the form
-        $('#editSynthesisSaveButton').show();
-        // show editSynthesisSaveButton
-        $('#addSynthesisButton').hide();
-        // hide addSynthesisButton
-        // -- fill form with the post information
-        var postID = $(this).attr('sPostID');
-        for (var j = 0; j < top.data.posts.length; j++) {// Go through all the posts
-            var d = top.data.posts[j];
-            if (d.postID == postID) {
-                $('#synthesisText').val(d.postMessage);
-                // Clear the comment box
-                top.currentReplyPost = d.postFromId;
-                $('#addSynthesis').attr('synthesisID', postID);
-                top.ListSynthesisPosts(d.postContext, d.postID, 'edit');
-            }
-
-        }
-    });
-
-    /* Removing a post from synthesis */
-    $(document).on('click', '.removeSynthesisPost', function(event) {
-        event.preventDefault();
-        $(this).parent().remove();
-    });
-
-    /* Single synthesis wrapper click event */
-    $(document).on('click', '.showPosts', function() {
-        if ($(this).hasClass('on') == true) {
-            $(this).parents('.synthesisPost').children('.synthesisPosts').fadeOut();
-            // hide posts
-            $(this).removeClass('on').addClass('off');
-            // add class off
-            $(this).text('Show Posts')
-        } else {
-            $(this).parents('.synthesisPost').children('.synthesisPosts').fadeIn();
-            // show posts
-            $(this).removeClass('off').addClass('on');
-            // add class on
-            $(this).text('Hide Posts')
-        }
-
-    });
-
-    /* Show which post is synthesized */
-    $(document).on('click', '.SynthesisComponent', function() {
-        var thisPost = $(this).attr('synthesisSource');
-        var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
-        $('#dSidebar').scrollTo($(postRef), 400, {
-            offset : -100
-        });
-        $(postRef).addClass('animated flash').css('border', '3px solid red').delay(5000).queue(function() {
-            $(this).removeClass('highlight animated flash').css('border', '1px solid #ddd');
-            $(this).dequeue();
-        });
-        $('#dInfo').fadeOut();
-        // hide #dInfo
-        $('#dSynthesis').fadeIn();
-        // show #synthesis
-
-    });
-
-    /* When user cancels synthesis creation */
-    $(document).on('click', '#cancelSynthesisButton', function() {
-        $('#addSynthesis').slideUp('fast');
-    });
 
     /* When user changes the option type for commenting */
     $(document).on('click', '.postTypeOptions', function() {
@@ -434,65 +254,6 @@ function Dscourse() {
                 default:
                     $('#text').val('Your comment...');
             }
-        }
-    });
-
-    /* When posttype is collapes or opened up make style changes */
-    $(document).on('click', '.postTypeWrap', function() {
-        var currentType = $(this).attr('typeID');
-        var thisLink = $(this).children('.typicn');
-        currentType = '.threadText[postTypeID="' + currentType + '"]';
-        var parentDiv = $(this).closest('.threadText');
-        $(parentDiv).children(currentType).fadeToggle('fast', function() {
-        });
-        if (thisLink.hasClass('grey-icons') == true) {
-            thisLink.removeClass('grey-icons');
-        } else {
-            thisLink.addClass('grey-icons');
-        }
-    });
-
-    /* Add button effect to the post type information */
-    $(document).on('mousedown', '.postTypeWrap', function() {// This is just for style to make it look like a button.
-        $(this).addClass('buttonEffect');
-    });
-
-    $(document).on('mouseup', '.postTypeWrap', function() {
-        $(this).removeClass('buttonEffect');
-    });
-
-    /* When show timeline button is clicked */
-//    $(document).on('click', '#showTimeline', function() {
-//        $('#timeline').slideToggle().queue(function() {
-//            top.DiscResize();
-//            top.VerticalHeatmap();
-//            $(this).dequeue();
-//        });
-//        if ($(this).hasClass('active') == true) {
-//            $(this).removeClass('active');
-//        } else {
-//            $(this).addClass('active');
-//        }
-//        top.DiscResize();
-//        top.VerticalHeatmap();
-//    });
-
-    /* When show synthesis button is clicked */
-    $(document).on('click', '#showSynthesis', function() {
-        $('#dInfo').fadeToggle();
-        console.log('showsynthesis');
-        // toggle hide sidebar content
-        $('#dSynthesis').fadeToggle();
-        if ($(this).hasClass('active') == true) {
-            $(this).html('Show Connected Posts');
-            $(this).removeClass('btn-primary');
-            $(this).addClass('btn-warning');
-            $(this).removeClass('active');
-        } else {
-            $(this).html('Show Recent Posts');
-            $(this).removeClass('btn-warning');
-            $(this).addClass('btn-primary');
-            $(this).addClass('active');
         }
     });
 
@@ -604,7 +365,6 @@ function Dscourse() {
         $('#displayIframe').load(function() {
             document.getElementById('displayIframe').contentWindow.postMessage(cmd, "*");
         }).queue(function() {
-            top.DiscResize();
             top.VerticalHeatmap();
             $('#containerDiv').css('width', '100% !important');
             $(this).dequeue();
@@ -614,7 +374,7 @@ function Dscourse() {
     $(document).on('click', '#recentContent li', function() {
         var postID = $(this).attr('postid');
         var postRef = 'div[level="' + postID + '"]';
-        $('#dMain').scrollTo($(postRef), 400, {
+        $(document).scrollTo($(postRef), 400, {
             offset : -100
         });
         $(postRef).removeClass('agree disagree comment offTopic clarify').addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
@@ -626,7 +386,7 @@ function Dscourse() {
     $(document).on('click', '.vHeatmapPoint', function() {
         var postID = $(this).attr('divpostid');
         var postRef = 'div[level="' + postID + '"]';
-        $('#dMain').scrollTo($(postRef), 400, {
+        $(document).scrollTo($(postRef), 400, {
             offset : -100
         });
         $(postRef).removeClass('agree disagree comment offTopic clarify').addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
@@ -636,29 +396,12 @@ function Dscourse() {
         $('.vHeatmapPoint').removeClass('highlight');
         $(this).addClass('highlight');
     });
-    /* Show synthesis post numbers next to post. Needs event control, hide and show propagate. TODO */
-    $(document).on('mouseover', '.synthesisWrap', function(event) {
-        $(this).children('span').fadeIn('slow');
-    });
-    $(document).on('mouseout', '.synthesisWrap', function(event) {
-        $(this).children('span').fadeOut('slow');
-    });
-    $(document).on('childClick', '.synthesisWrap', function(item){
-            var thisPost = item.attr('synthesissource');
-            var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
-            $('#dSidebar').scrollTo($(postRef), 400, {
-                offset : -100
-            });
-            $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
-                item.removeClass('highlight animated flash').css('background-color', 'whitesmoke');
-                item.dequeue();
-            });
-            $('#dInfo').fadeOut();
-            // hide #dInfo
-            $('#dSynthesis').fadeIn();
-            // show #synthesis
-    });
+
     $(window).resize(function() {// When window size changes resize
+        top.DiscResize();
+        top.VerticalHeatmap();
+    });
+    $(window).scroll(function() {// When window size changes resize
         top.DiscResize();
         top.VerticalHeatmap();
     });
@@ -674,8 +417,8 @@ Dscourse.prototype.loadDscourse = function() {
         // When the main window scrolls heatmap needs to redraw
         $('#dMain').on('scroll', function() {
             console.log('move');
-            main.VerticalHeatmap();
-            main.DrawShape();
+            //main.VerticalHeatmap();
+            //main.DrawShape();
         });
     });
 
@@ -691,15 +434,21 @@ Dscourse.prototype.GetData = function() {
 
     // Ajax call to get data and put all data into json object
     $.ajax({ 
-        type : "GET",
-        url : "dscourse/sampledata.json",
-        dataType : "json",
+        type : "POST",
+        url : "api/data.php",
+        data : {
+            action : "GetData",
+            postPage : 1 // This needs to be received from the page.
+
+        },
         success : function(data) {
+            console.log(data);
             main.data = data;
             main.currentUserID = data.currentUser.userId; 
             main.SingleDiscussion();
             main.currentUserID = data.currentUser.userId;
             main.currentUserRole = data.currentUser.userRole;
+            main.DiscResize();
         },
         error : function(xhr, status) { // If there was an error
             console.log('There was an error getting data.');
@@ -710,7 +459,7 @@ Dscourse.prototype.GetData = function() {
 
 };
 
-Dscourse.prototype.DeletePost = function(postID) {
+Dscourse.prototype.DeletePost = function(postId) {
     /*
      *	Deletes posts from the server
      */
@@ -718,65 +467,20 @@ Dscourse.prototype.DeletePost = function(postID) {
     var main = this;
     $.ajax({
         type: 'POST',
-        url: 'php/data.php',
+        url: 'api/data.php',
         data: {
-            action: 'deletePost',
-            postID: postID
+            action: 'DeletePost',
+            postId: postId
         },
         success: function(data){
-            //remove deleted post
-            main.data.posts = main.data.posts.filter(function(a){
-                return parseInt(a.postID) != data;
-            });
+            console.log(data);
+            main.GetData();
             main.RebuildPosts();
-//            //re-draw
-//            main.SingleDiscussion();
-//            main.DiscResize();
-//            main.VerticalHeatmap();
         },
         error: function(xhr){
             console.log(xhr);
         }
     });
-};
-
-Dscourse.prototype.EditPost= function(post, cDisc){
-    var main = this;
-
-    $.ajax({// Add user to the database with php.
-        type : "POST",
-        url : "php/data.php",
-        data : {
-            action : 'editPost',
-            post : post
-        },
-        success : function(pID) {
-            for (var j = 0; j < main.data.posts.length; j++) {  // Go through all the posts
-                var o = main.data.posts[j];
-                if(o.postID == post.postID){
-                    console.log('========================================');
-                    console.log(o);
-                    console.log(post);
-                    o.postFromId		= post.postFromId,
-                        o.postAuthorId		= post.postAuthorId,
-                        o.postMessage		= post.postMessage,
-                        o.postType			= post.postType,
-                        o.postSelection		= post.postSelection,
-                        o.postMedia			= post.postMedia,
-                        o.postMediaType		= post.postMediaType,
-                        o.postContext		= post.postContext
-                }
-            }
-
-            main.RebuildPosts();
-        },
-        error : function(xhr, status) {// If there was an error
-            console.log('There was an error talking to data.php');
-            console.log(xhr);
-            console.log(status);
-        }
-    });
-
 };
 
 Dscourse.prototype.RebuildPosts = function() {
@@ -787,12 +491,9 @@ Dscourse.prototype.RebuildPosts = function() {
 
     $('.levelWrapper[level="0"]').html('');
     main.SingleDiscussion();
-    main.DiscResize();
     main.VerticalHeatmap();
 
 };
-
-
 
 Dscourse.prototype.SingleDiscussion = function() {
     /*
@@ -832,7 +533,7 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
     main.timelineMin = 0;
     main.timelineMax = 0;
     // Clear timeline range
-    $('#participantList').html('<button class="btn btn-sm disabled">Participants: </button>');
+    $('#participantList').html('<button class="btn disabled">Participants: </button>');
     // Clear participant list
     var j, p, d, q, typeText, authorID, message, authorThumb, synthesisCount;
     
@@ -921,22 +622,20 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
 
         // Check if this post has selection
         var selection = '';
-        if(d.postSelection.length > 1){
+        if(d.postSelection){
         selection = ' <span href="#" rel="tooltip" title="This post has highlighted a segment in the parent post. Click to view." class="selectionMsg" style="display:none;">a</span> ';
         } 
 
         // Check if this post has media assigned.
         var media = '';
-        if (d.postMedia.length > 1) {
+        if (d.postMedia) {
             media = '<span href="#" rel="tooltip" title="This post has a ' + d.postMediaType + ' media attachment. Click to view." class="mediaMsg"> ' + d.postMediaType + '  <span class="typicn tab "></span> </span> ';
         }
         console.log(d.postMedia);
 
         var showPost = 'yes';
 
-        // Is this post part of any synthesis?
-        var synthesis = '';
-        synthesis = main.PostInSynthesis(d.postID);
+
 
         if (showPost == 'yes') {
 
@@ -949,27 +648,13 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
             		+ '<div class="postTopRow"><span class="postAuthorView" rel="tooltip"  title="' + authorThumb + '"> ' + authorID + '</span><div class="postMeta"> <span class="postMetaBtn replyPost sayBut2" postID="' + d.postID + '"> <span class="glyphicon glyphicon-plus"></span>  Reply </span><div class="postMetaBtn responseWrap" >' + responses + '</div> <div class="postMetaBtn" > ' + ((userRole == 'Instructor' || userRole == "TA")?'<i class="glyphicon glyphicon-trash deletePostButton" ></i>':'') + ' <i class="glyphicon glyphicon-edit editPostButton"></i> </div>' + '   </div></div>'
                         +  '<div class="postTextWrap">'
             			      + '<span class="postMessageView"> ' + message + '</span>'
-            			 + media + selection + synthesis 
+            			 + media + selection
             		 + '</div>' 
             		 //+ ' <button class="btn btn-sm btn-success sayBut2" style="display:none" postID="' + d.postID + '"> <span class="typicn plus "></span>  </button> '
 
             		+ '</div>'
             );
 
-            /********** SYNTHESIS POSTS ***********/
-            if (d.postType == 'synthesis') {
-                if ((currentUserID == d.postAuthorId) || (userRoleAuthor == 'Instructor' || userRoleAuthor == 'TA')) {
-                    var editPostButton = '<button class="btn btn-sm editSynthesis" sPostID="' + d.postID + '">Edit</button> ';
-                } else {
-                    var editPostButton = '';
-                }
-
-                $('#synthesisList').prepend('<div class="synthesisPost " sPostID="' + d.postID + '"><span class="postAuthorView" rel="tooltip" > ' + authorThumb + '</span>' + '		<p class="synthesisP">' + message + '</p>' + '		<div class="synthesisButtonWrap"> <button class="gotoSynthesis btn btn-xs" gotoID="' + d.postID + '"> Go to Post </button><button class="showPosts btn btn-xs">Show Posts</button></div>' + '	</div>');
-                main.ListSynthesisPosts(d.postContext, d.postID, 'add');
-                synthesisCount = 'some';
-            }
-
-            var pTime = main.GetUniformDate(d.postTime);
 
 
             var t = new Date(0);
@@ -986,14 +671,15 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
                 main.uParticipant.push(d.postAuthorId);
                 // add id to the array
             }
+            console.log(main.uParticipant);
 
         } ;// end if showpost.
     };// End looping through posts
     
     $('.deletePostButton').on('click', function(){
        var del = confirm("Are you sure you would like to delete this post? This option is irreversible.");
-        var postID =  $(this).parent().parent().attr('level')
-        console.log(postID);
+       var postID =  $(this).closest('.threadText').attr('level');
+       console.log(postID);
         if(del){
            main.DeletePost(postID);
        }
@@ -1006,7 +692,6 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
         var parentPost = main.data.posts.filter(function(a){return a.postID == parentPostID})[0];
         var postID, fromId;
 
-        // Check if participate value if anyone or network
         $('#highlightDirection').hide();
         $('#highlightShow').hide();
         var postQuote = $(this).parent().children('.postTextWrap').children('.postMessageView').html();
@@ -1017,14 +702,16 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
         });
         $('.threadText').removeClass('highlight');
 
-        fromId = $(this).parent().parent().parent().attr('level');
-        postID =  "EDIT|||"+$(this).parent().parent().attr('level')+'|||'+fromId;
+        fromId = $(this).closest('.threadText').parent().attr('level');
+        postID =  "EDIT|||"+$(this).closest('.threadText').attr('level')+'|||'+fromId;
 
         if (postQuote != '') {
             $('#highlightDirection').show();
             $('#highlightShow').show().html(postQuote);
         }
-        top.currentReplyPost = postID ;
+
+        // Change Add
+        main.currentReplyPost = postID ;
         $('#overlay').show();
         $('#commentWrap').fadeIn('fast');
         $(this).parent('.threadText').removeClass('agree disagree comment offTopic clarify').addClass('highlight');
@@ -1036,24 +723,6 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
 
     });        
 
-    if($("#recentContent").children().length==0){
-        $("#recentPostsHeader").html("Recent posts");
-        $("#recentContent").append('<span>There are no new posts since you last visited</span>');
-    }
-    else if(!main.init){
-        $("#recentPostsHeader").html("Recent posts");
-    }
-    else{
-        //Build the recentPosts header
-        if(lastView!='never')   
-            $('#recentPostsHeader').html("Posts since you visited "+jQuery.timeago(new Date(main.GetUniformDate(lastView, false))));
-        else{
-            $('#recentPostsHeader').html("Posts since before you joined");
-        }
-    }
-    if (synthesisCount == 'some') {
-        $('#synthesisHelpText').hide();
-    }
 
     main.timelineValue = main.timelineMax;
     // Set the timeline value to the max.
@@ -1080,37 +749,18 @@ Dscourse.prototype.ListDiscussionPosts = function(userRole) {
 
         appendTo : '#discussionWrap'
     });
-    $("#synthesisDrop").droppable({
-        hoverClass : "sDropHover",
-        tolerance : 'touch',
-        drop : function(event, ui) {
-            var shortText = main.truncateText(main.sPostContent, 100);
-            var ids = [];
-            $('#synthesisPostWrapper').children('.synthesisPosts').each(function() {
-                ids.push($(this).attr('spostid'));
-            });
-            var instr = "Drag and drop posts here to add to synthesis.";
-            var box = $(this);
-            if (ids.indexOf(main.sPostID) == -1) {
-                $('#synthesisPostWrapper').prepend('<div sPostID="' + main.sPostID + '" class=" synthesisPosts">' + shortText + ' <div>');
-                // Append original post
-                $(this).html("Added!");
-            } else
-                $(this).html('Already added!');
-            window.setTimeout(function() {
-                box.html(instr);
-            }, 2000);
-        }
-    });
+
     main.DiscResize();
     main.VerticalHeatmap();
     if(typeof goTo != "undefined" && main.init){
         var p = $('.threadText[level='+goTo+']');
         p.click();
-        $('#dMain').scrollTo(p, 400, {
+        $(document).scrollTo(p, 400, {
             offset : -100
         });   
     }
+    main.UniqueParticipants();
+
 }
 
 Dscourse.prototype.getName = function(id, type) {
@@ -1172,51 +822,6 @@ Dscourse.prototype.getAuthorThumb = function(id, size) {
     }
 };
 
-Dscourse.prototype.PostInSynthesis = function(postID) {
-    /*
-     *	Checks to see if this posts is in a synthesis so a notification can be drawn next to the post.
-     */
-
-    var main = this;
-    var output = '';
-    var count = 0;
-    var j, k, i, o;
-    for ( j = 0; j < main.data.posts.length; j++) {// Go through all the posts in this discussion
-        k = main.data.posts[j];
-        if (k.postContext) {// Check post context where synthesis information is
-            var posts = k.postContext.split(",");
-            // Split post content into array
-            for ( i = 0; i < posts.length; i++) {// For each posts in the array
-                o = posts[i];
-                if (o == postID) {// check if this post is synthesis in the source post
-                    output += '<span rel="tooltip" title="' + main.getName(k.postAuthorId, 'first') + '  made a connection to this post. Click to view." class="SynthesisComponent hide" synthesisSource="' + k.postID + '"><span class="typicn feed "></span></span>';
-                    count++;
-                }
-            }
-        }
-    }
-    if (count > 1) {// After collecting all the posts combine them into html output
-        $(output).off('click');
-        output = '<span class="synthesisWrap"> <b>' + count + '</b> Connections ' + output + '</span>';
-    } else if (count == 1) {
-        $(output).on('click', function(e) {
-            var thisPost = $(this).attr('synthesissource');
-            var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
-            $('#dSidebar').scrollTo($(postRef), 400, {
-                offset : -100
-            });
-            $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
-                $(this).removeClass('highlight animated flash').css('background-color', 'whitesmoke');
-                $(this).dequeue();
-            });
-            $('#dInfo').fadeOut();
-            // hide #dInfo
-            $('#dSynthesis').fadeIn();
-            // show #synthesis
-        });
-    }
-    return output;
-}
 
 Dscourse.prototype.GetUniformDate = function(date, off){
     if(typeof off == "undefined")
@@ -1377,158 +982,42 @@ Dscourse.prototype.ResponseCounters = function(postId) {
     return text;
 };
 
-Dscourse.prototype.PostInSynthesis = function(postID) {
-    /*
-     *  Checks to see if this posts is in a synthesis so a notification can be drawn next to the post.
-     */
-
-    var main = this;
-    var output = '';
-    var count = 0;
-    var j, k, i, o;
-    for ( j = 0; j < main.data.posts.length; j++) {// Go through all the posts in this discussion
-        k = main.data.posts[j];
-        if (k.postContext) {// Check post context where synthesis information is
-            var posts = k.postContext.split(",");
-            // Split post content into array
-            for ( i = 0; i < posts.length; i++) {// For each posts in the array
-                o = posts[i];
-                if (o == postID) {// check if this post is synthesis in the source post
-                    output += '<span rel="tooltip" title="' + main.getName(k.postAuthorId, 'first') + '  made a connection to this post. Click to view." class="SynthesisComponent hide" synthesisSource="' + k.postID + '"><span class="typicn feed "></span></span>';
-                    count++;
-                }
-            }
-        }
-    }
-    if (count > 1) {// After collecting all the posts combine them into html output
-        $(output).off('click');
-        output = '<span class="synthesisWrap"> <b>' + count + '</b> Connections ' + output + '</span>';
-    } else if (count == 1) {
-        $(output).on('click', function(e) {
-            var thisPost = $(this).attr('synthesissource');
-            var postRef = '.synthesisPost[sPostID="' + thisPost + '"]';
-            $('#dSidebar').scrollTo($(postRef), 400, {
-                offset : -100
-            });
-            $(postRef).addClass('animated flash').css('background-color', 'rgba(255,255,176,1)').delay(5000).queue(function() {
-                $(this).removeClass('highlight animated flash').css('background-color', 'whitesmoke');
-                $(this).dequeue();
-            });
-            $('#dInfo').fadeOut();
-            // hide #dInfo
-            $('#dSynthesis').fadeIn();
-            // show #synthesis
-        });
-    }
-    return output;
-};
 
 Dscourse.prototype.DiscResize = function() {
     /*
      * Resizes component widths and heights on the discussion page
      */
     var main = this;
-    var wHeight, wWidth,  height, mHeight;
 
-    var wrapper = $('#dRowMiddle');
-
-    wHeight = $(window).height();
-    wWidth = $(window).width();
-
-    // resize #dRowMiddle accordingly.
-    height = wrapper.height();
-    mHeight = -height;
-
-      $('#dSidebar').css({
-        'height' : height+'px',
-        'overflow-y' : 'scroll',
-        'overflow-x' : 'hidden'
-    });
-    $('#vHeatmap').css({
-        'height' : height+'px',
-        'overflow-y' : 'hidden',
-        'overflow-x' : 'hidden'
-    });
-    $('#dRowMiddle').css({
-        'margin-top' : 10
-    });
-    $('#lines').css({
-        'height' : height+'px',
-        'margin-top' : mHeight + 'px'
-    });
-    $('#mediaBox').css({
-        'height' : wHeight - 200 + 'px'
-    });
-    $('#node').css({
-        'height' : wHeight - 300 + 'px'
-    });
-    $('#homeWrapper').css({
-        'width' : wWidth - 600 + 'px'
-    });
-
-    //=== CORRECT Vertical Heatmap bars on resize  ===
-    // Each existing heatmap point needs to be readjusted in terms of height.
     // View box calculations
     var boxHeight = $('#vHeatmap').height();
     var boxWidth = $('#vHeatmap').width();
+    var offset = $('#vHeatmap').offset().top;
     // Get height of the heatmap object
-    var totalHeight = $('#dMain')[0].scrollHeight;
+    var visibleHeight = $(window).height();
+    // Get height of visible part of the main section
+    var totalHeight = $(document).height();
     // Get height for the entire main section
+//    console.log("BoxHeight : " + boxHeight);
+//    console.log("visibleHeight : " + visibleHeight);
+//    console.log("totalheight : " + totalHeight);
 
-    $('#scrollBox').css({
-        'width' : boxWidth + 'px'
-    });
+    // Size the box
+    var scrollBoxHeight = visibleHeight * boxHeight / totalHeight;
+    $('#scrollBox').css({'height': scrollBoxHeight, 'width' : boxWidth + 'px'});
 
-    $('.vHeatmapPoint').each(function() {
-        var postValue = $(this).attr('divPostID');
-        // get the divpostid value of this div
+    // Scroll box to visible area
+    var offset =  $('#dMain').offset().top;
 
-        var thisOne = $(this);
-        // redraw the entire thing.
-        $('.threadText').each(function() {// Go through each post to see if postAuthorId in Divs is equal to the mapInfo
-            var postAuthor = $(this).attr('postAuthorId');
-            var postID = $(this).attr('level');
-            if (postID == postValue) {
-                var divPosition = $(this).position();
-                // get the location of this div from the top
-                //console.log(divPosition);
-                var ribbonMargin = (divPosition.top) * boxHeight / totalHeight;
-                // calculate a yellow ribbon top for the vertical heatmap
-                ribbonMargin = ribbonMargin;
-                // this correction is for better alignment of the lines with the scroll box.
+    var mainScrollPosition = $(window).scrollTop();
+    console.log("offset : " + offset);
 
-                // There is an error when the #dMain layer is scrolled the position value is relative so we have minus figures.
-                console.log(boxWidth);
-                $(thisOne).css({'margin-top': ribbonMargin, 'width' : boxWidth + 'px'});
-            }
-        });
-    });
-    // ==  end correct vertical heatmap
-    $('#displayFrame').css({
-        'height' : wHeight - 200 + 'px'
-    });
-    $('#displayIframe').css({
-        'height' : wHeight - 250 + 'px'
-    });
-    //Fixing the width of the threadtext
-    $('.threadText').each(function() {
-        var parentwidth = $(this).parent().width();
-        var parentheight = $(this).children('.postTextWrap').height();
-        var thiswidth = parentwidth - 2;
-        $(this).css({
-            'width' : thiswidth + 'px',
-            'padding-left' : '40px'
-        });
-        $(this).children('.postTypeView').css('width', '20px');
-        $(this).children('.sayBut2').css({
-            'width' : '30px',
-            'height' : parentheight + 10 + 'px'
+    var mainHeight = $('#dMain').height();
+    var boxScrollPosition = mainScrollPosition * boxHeight / mainHeight;
+    $('#scrollBox').css('margin-top', boxScrollPosition);
+    // Gives the correct scrolling location to the box
 
-        });
-        $(this).children('.responseWrap').css('width', '40px');
-        $(this).children('.postTextWrap').css('width', thiswidth - 65 + 'px');
-    });
-    main.UniqueParticipants();
+
 };
 
 Dscourse.prototype.ClearVerticalHeatmap = function() {
@@ -1549,21 +1038,11 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
     var boxHeight = $('#vHeatmap').height();
     var boxWidth = $('#vHeatmap').width();
     // Get height of the heatmap object
-    var visibleHeight = $('#dMain').height();
+    var visibleHeight = $(window).height();
     // Get height of visible part of the main section
-    var totalHeight = $('#dMain')[0].scrollHeight;
+    var totalHeight = $('#dMain').height();
     // Get height for the entire main section
 
-    // Size the box
-    var scrollBoxHeight = visibleHeight * boxHeight / totalHeight;
-    $('#scrollBox').css({'height': scrollBoxHeight, 'width' : boxWidth + 'px'});
-    // That gives the right relative size to the box
-
-    // Scroll box to visible area
-    var mainScrollPosition = $('#dMain').scrollTop();
-    var boxScrollPosition = mainScrollPosition * boxHeight / totalHeight;
-    $('#scrollBox').css('margin-top', boxScrollPosition);
-    // Gives the correct scrolling location to the box
 
     if (mapType == 'user') {// if mapType is -user- mapInfo is the user ID
         console.log('vertica heatmap: user');
@@ -1575,7 +1054,7 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
                 // get the location of this div from the top
 
                 // dynamically find.
-                var mainDivTop = $('#dMain').scrollTop();
+                var mainDivTop = $(document).scrollTop();
                 console.log('main div scroll: ' + mainDivTop);
                 console.log(divPosition);
                 var ribbonMargin = (divPosition.top + mainDivTop) * boxHeight / totalHeight;
@@ -1603,7 +1082,7 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
                 var divPosition = $(this).position();
                 // get the location of this div from the top
                 //console.log(divPosition);
-                var mainDivTop = $('#dMain').scrollTop();
+                var mainDivTop = $(document).scrollTop();
                 var ribbonMargin = (divPosition.top + mainDivTop) * boxHeight / totalHeight;
                 // calculate a yellow ribbon top for the vertical heatmap
                 $('#vHeatmap').append('<div class="vHeatmapPoint" style="margin-top:' + ribbonMargin + 'px; width: '+boxWidth+'px" divPostID="' + postID + '" ></div>');
@@ -1624,8 +1103,8 @@ Dscourse.prototype.VerticalHeatmap = function(mapType, mapInfo) {
 
     }
 
-    main.DrawShape();
-    if(!mapInfo){mapInfo = 'null'}; if(!mapType){mapType = 'null'}; 
+    //main.DrawShape();
+    if(!mapInfo){mapInfo = 'null'}; if(!mapType){mapType = 'null'};
 };
 
 Dscourse.prototype.UniqueParticipants = function() {
@@ -1674,48 +1153,6 @@ Dscourse.prototype.UniqueParticipants = function() {
             zIndex: 1000
          });
 };
-
-Dscourse.prototype.DrawShape = function() {
-    /*
-     * Draws the lines that connect scrollbox and the discussion window
-     */
-    var main = this;
-    // get the canvas element using the DOM
-    var canvas = document.getElementById('cLines');
-    var scrollBoxTop = $('#scrollBox').css('margin-top');
-    scrollBoxTop = scrollBoxTop.replace('px', '');
-    scrollBoxTop = Math.floor(scrollBoxTop);
-    var scrollBoxHeight = $('#scrollBox').css('height');
-    // find the height of scrollbox
-    scrollBoxHeight = scrollBoxHeight.replace('px', '');
-    scrollBoxHeight = Math.floor(scrollBoxHeight);
-    var linesHeight = $('#lines').height();
-    canvas.height = linesHeight;
-    var scrollWidth = $('#vHeatmap').width();
-   //var correction =  26 - scrollWidth;
-    var scrollBoxBottom = scrollBoxHeight + scrollBoxTop;
-    // add the height to the top position to find the bottom.
-    // use getContext to use the canvas for rawing
-    var ctx = canvas.getContext('2d');
-    // Clear the drawing
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Options
-    ctx.lineCap = 'round';
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgb(107,107,107)';
-    // Top line
-    ctx.beginPath();
-    ctx.moveTo(0, scrollBoxTop + 1);
-    ctx.lineTo(28, 1);
-    ctx.stroke();
-    ctx.closePath();
-    // Bottom line
-    ctx.beginPath();
-    ctx.moveTo(0, scrollBoxBottom -1);
-    ctx.lineTo(28, linesHeight - 1);
-    ctx.stroke();
-    ctx.closePath();
-}
 
 Dscourse.prototype.DrawTimeline = function()// Draw the timeline.
 {
@@ -1838,7 +1275,6 @@ Dscourse.prototype.AddPost = function() {
     }
     
     // Get post values from the form.
-    // postID -- postFromId
     var postFromId = main.currentReplyPost;
 
     // author ID -- postAuthorId -- this is the session user
@@ -1848,7 +1284,6 @@ Dscourse.prototype.AddPost = function() {
     // type -- postType
     var postType = 'comment';
     var formVal = $('#postTypeID > .active').attr('id');
-
     if (formVal !== undefined) {
         postType = formVal;
     }
@@ -1875,14 +1310,18 @@ Dscourse.prototype.AddPost = function() {
         'postSelection' : postSelection,
         'postMedia' : postMedia,
         'postMediaType' : main.postMediaType,
-        'postContext' : postContext
+        'postContext' : postContext,
+        'postTime'  : main.GetCurrentDate()
     };
 
+    post.postMessage = post.postMessage.replace(/\W/g,function(match){return match.replace('\\','');});
+    post.postPage = 1; // Get this value from the page.
 
+    console.log(postFromId);
     if(/EDIT/.test(postFromId)){
         console.log('postfromID value: ' + postFromId);
-        main.EditPost({
-            postID: postFromId.split('|||')[1],
+        var editPost = {
+            postId: postFromId.split('|||')[1],
             postFromId : postFromId.split('|||')[2],
             postAuthorId : postAuthorId,
             postMessage : postMessage.replace('\'', '\\\''),
@@ -1891,56 +1330,58 @@ Dscourse.prototype.AddPost = function() {
             postMedia : postMedia,
             postMediaType : main.postMediaType,
             postContext : postContext
-        }, currentDisc);
+        };
+
+        $.ajax({// Add user to the database with api.
+            type : "POST",
+            url : "api/data.php",
+            data : {
+                action : 'EditPost',
+                post : editPost
+            },
+            success : function(data) {
+                console.log(data);
+                main.GetData();
+                main.RebuildPosts();
+
+            },
+            error : function(xhr, status) {// If there was an error
+                console.log('There was an error talking to data.php');
+                console.log(xhr);
+                console.log(status);
+            }
+        });
+
+
     } else {
-        // if the post is not edit then save new.
-        post.postMessage = post.postMessage.replace(/\W/g,function(match){return match.replace('\\','');});
-        post.postTime = main.GetCurrentDate();
-        post.postID = main.data.posts[main.data.posts.length-1].postID+1;
-        main.data.posts.push(post);
+        $.ajax({
+            type : "POST",
+            url : "api/data.php",
+            data : {
+                post : post,
+                action : 'AddPost'
+            },
+            success : function(data) {// If connection is successful .
+                console.log(data);
+                main.GetData();
+                var divHighlight = 'div[level="' + data + '"]';
+                $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
+                $(document).scrollTo($(divHighlight), 400, {
+                    offset : -100
+                });
+            },
+            error : function(data) {// If connection is not successful.
+                console.log(data);
+                console.log("Dscourse Log: the connection to data.api failed. Did not save post");
+            }
+        });
     }
 
-    main.RebuildPosts();
-    var divHighlight = 'div[level="' + post.postID + '"]';
-    console.log(divHighlight);
-    $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
-    $('#dMain').scrollTo($(divHighlight), 400, {
-        offset : -100
-        });
+
+
 
 };
 
-Dscourse.prototype.DiscDateStatus = function(dID) {
-    /*
-     *  Checks the date to see if the discussion is active, individual participation or closed.
-     */
-    var main = this;
-    var dStatus;
-    // Get course dates:
-    var o;
-    o = main.data.discussion;
-    if (o.dID === dID) {
-        // Compare dates of the discussion to todays date.
-        var beginDate = main.GetUniformDate(o.dStartDate);
-        var openDate = main.GetUniformDate(o.dOpenDate);
-        var endDate = main.GetUniformDate(o.dEndDate);
-        var currentDate = new Date().getTime();
-        // Compare dates of the discussion to todays date. But first convert mysql dates into js
-        if (currentDate >= beginDate && currentDate <= endDate) {// IF today's date bigger than start date and smaller than end date?
-            if (currentDate <= openDate) {// If today's date smaller than Open Date
-                dStatus = 'student';
-                // The status is open to individual contribution
-            } else {
-                dStatus = 'all';
-                // The status is open to everyone
-            }
-        } else {
-            dStatus = 'closed';
-            // The status is closed.
-        }
-        return dStatus;
-    }
-}
 
 Dscourse.prototype.Initials = function (fullname) {
     var matches = fullname.match(/\b(\w)/g);
@@ -1961,8 +1402,7 @@ Dscourse.prototype.GetCurrentDate = function() {
     var x = new Date();
     var monthReplace = (x.getUTCMonth() < 10) ? '0' + (x.getUTCMonth() + 1) : x.getUTCMonth();
     var dayReplace = (x.getUTCDate() < 10) ? '0' + x.getUTCDate() : x.getUTCDate();
-    var dateNow = x.getUTCFullYear() + '-' + monthReplace + '-' + dayReplace + ' ' + x.getUTCHours() + ':' + x.getUTCMinutes() + ':' + x.getUTCSeconds();
-    return dateNow;
+    return x.getUTCFullYear() + '-' + monthReplace + '-' + dayReplace + ' ' + x.getUTCHours() + ':' + x.getUTCMinutes() + ':' + x.getUTCSeconds();
 }
 
 Dscourse.prototype.HighlightRelevant = function(postID) {
@@ -1981,7 +1421,7 @@ Dscourse.prototype.HighlightRelevant = function(postID) {
     });
     if(f.length > 0){
         o = f[0];
-        if (o.postSelection !== "") {// If there is selection do highlighting
+        if (o.postSelection) {// If there is selection do highlighting
             thisSelection = o.postSelection.split(",");
             var num1 = parseInt(thisSelection[0]);
             var num2 = parseInt(thisSelection[1]);
@@ -2043,217 +1483,4 @@ Dscourse.prototype.GetSelectedLocation = function(element)// Data about begin an
     };
 };
 
-Dscourse.prototype.AddSynthesis = function() {// Revise for synthesis posts
-
-    var main = this;
-
-    main.sPostID = '';
-    main.sPostContent = '';
-
-    // Get post values from the synthesis form.
-    // postID -- postFromId
-
-    var postFromId = main.currentReplyPost;
-    // Done
-    if (postFromId.length < 1){postFromId = 0 }
-    // author ID -- postAuthorId -- this is the session user
-    var postAuthorId = main.data.currentUser.userId;;
-    // Done
-    var postMessage = $('#synthesisText').val();
-    // Done
-
-    // type -- postType
-    var postType = 'synthesis';
-
-    // locationIDhidden -- postSelection
-    var postSelection = ' ';
-    // Not done but works.
-
-    var postMedia = '';
-    // Synthesis doesn't have media yet.
-
-    var postContext = '';
-
-    $('#synthesisPostWrapper > .synthesisPosts').each(function() {
-        if (postContext.length > 0) {
-            postContext += ',';
-        }
-        var thisPostID = $(this).attr('sPostID');
-        postContext += thisPostID;
-
-    });
-    //console.log('post context ' + postContext);
-
-    // Create post object and append it to allPosts
-
-    post = {
-        'postFromId' : postFromId,
-        'postAuthorId' : postAuthorId,
-        'postMessage' : postMessage,
-        'postType' : postType,
-        'postSelection' : postSelection,
-        'postMediaType' : main.postMediaType,
-        'postMedia' : postMedia,
-        'postContext' : postContext
-    };
-
-    post.postTime = main.GetCurrentDate();
-    post.postID =  main.data.posts[main.data.posts.length-1].postID+1;
-    main.data.posts.push(post);
-
-    $('#addSynthesis').slideUp('fast');   // Slide up the form, it will be cleared when new synthesis is created
-    $('#synthesisList').html(' '); 			// Empty synthesis list
-    main.RebuildPosts();
-    var divHighlight = 'div[level="' + post.postID + '"]';
-    $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
-    $('#dMain').scrollTo($(divHighlight), 400, {
-        offset : -100
-    });
-
-    // run Ajax to save the post object
-//
-//    $.ajax({
-//        type : "POST",
-//        url : "php/data.php",
-//        data : {
-//            post : post,
-//            action : 'addPost',
-//            currentDiscussion : currentDisc
-//        },
-//        success : function(data) {// If connection is successful .
-//            post.postTime = main.GetCurrentDate();
-//            post.postID = data;
-//            main.data.posts.push(post);
-//
-//            $('#addSynthesis').slideUp('fast');   // Slide up the form, it will be cleared when new synthesis is created
-//            $('#synthesisList').html(' '); 			// Empty synthesis list
-//            main.RebuildPosts();
-//            var divHighlight = 'div[level="' + data + '"]';
-//            $(divHighlight).removeClass('agree disagree comment offTopic clarify').addClass('highlight animated flash');
-//            $.scrollTo($(divHighlight), 400, {
-//                offset : -100
-//            });
-//        },
-//        error : function(data) {// If connection is not successful.
-//            console.log(data);
-//            console.log("Dscourse Log: the connection to data.php failed. Did not save synthesis");
-//        }
-//    });
-};
-
-
-Dscourse.prototype.EditSynthesis = function() {// Revise for synthesis posts
-
-    var main = this;
-
-    main.sPostID = '';
-    main.sPostContent = '';
-
-    var currentDisc = $('#dIDhidden').val();
-    var editPostID = $('#addSynthesis').attr('synthesisID');
-
-    // Get post values from the synthesis form.
-    // postID -- postFromId
-    var postFromId = main.currentReplyPost;
-    // Done
-
-    // author ID -- postAuthorId -- this is the original poster
-    var postAuthorId = main.data.posts.filter(function(item){
-        return item.postID == editPostID;
-    }).pop().postAuthorId;
-    // Done
-    var postMessage = $('#synthesisText').val();
-    // Done
-
-    // type -- postType
-    var postType = 'synthesis';
-
-    // locationIDhidden -- postSelection
-    var postSelection = ' ';
-    // Not done but works.
-
-    var postMedia = '';
-    // Synthesis doesn't have media yet.
-
-    var postContext = '';
-
-    $('#synthesisPostWrapper > .synthesisPosts').each(function() {
-        if (postContext.length > 0) {
-            postContext += ',';
-        }
-        var thisPostID = $(this).attr('sPostID');
-        postContext += thisPostID;
-
-    });
-
-    // Create post object and append it to allPosts
-
-    post = {
-        'postID' : editPostID,
-        'postFromId' : postFromId,
-        'postAuthorId' : postAuthorId,
-        'postMessage' : postMessage,
-        'postType' : postType,
-        'postSelection' : postSelection,
-        'postMediaType' : main.postMediaType,
-        'postMedia' : postMedia,
-        'postContext' : postContext
-    };
-
-    // run Ajax to save the post object
-
-    $.ajax({
-        type : "POST",
-        url : "php/data.php",
-        data : {
-            post : post,
-            action : 'editPost',
-            currentDiscussion : currentDisc
-        },
-        success : function(data) {// If connection is successful .
-            location.reload();
-            /*
-             $('#addSynthesis').slideUp('fast');   // Hide the form
-             console.log('is this happening?');
-             main.RebuildPosts();
-             */
-
-        },
-        error : function(data) {// If connection is not successful.
-            console.log(data);
-            console.log("Dscourse Log: the connection to data.php failed. Did not edit synthesis");
-        }
-    });
-
-};
-
-Dscourse.prototype.ListSynthesisPosts = function(postList, sPostID, role) {// Populate unique participants.
-
-    var main = this;
-
-    if (!role) {
-        role = 'add';
-    }
-
-    var i, o, j, k;
-    var posts = postList.split(",");
-
-    for ( i = 0; i < posts.length; i++) {
-        o = posts[i];
-
-        for ( j = 0; j < main.data.posts.length; j++) {
-            k = main.data.posts[j];
-            if (k.postID == o) {
-                var postMessage = main.truncateText(k.postMessage, 100);
-                if (role == 'add') {
-                    $('.synthesisPost[sPostID="' + sPostID + '"]').append('<div sPostID="' + k.postID + '" class=" synthesisPosts" style="display:none"> <div class="synTop">' + main.getAuthorThumb(k.postAuthorId, 'tiny') + ' ' + main.getName(k.postAuthorId) + '</div><div class="synMessage">' + postMessage + ' </div><div>');
-                } else if (role == 'edit') {
-                    console.log('role is edit');
-                    $('#synthesisPostWrapper').append('<div sPostID="' + k.postID + '" class=" synthesisPosts hide"> <div class="synTop">' + main.getAuthorThumb(k.postAuthorId, 'tiny') + ' ' + main.getName(k.postAuthorId) + '</div><div class="synMessage">' + postMessage + ' </div><button class="btn btn-mini removeSynthesisPost">Remove</button><div>');
-                    $('#synthesisPostWrapper').children('div').show();
-                }
-            }
-        }
-    }
-};
 

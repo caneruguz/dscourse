@@ -90,6 +90,11 @@ font-weight: 200;
 /* 
  *  Timeline and Participant tabs
 */
+#dscourse {
+    background: #eee;
+    padding: 20px;
+    box-shadow: 0 0 7px -2px #666;
+}
 #timeline {
 	width:100%;
 	height:20px;
@@ -253,11 +258,12 @@ font-weight: 200;
 }
 
 .topLevelMessage {
-padding: 10px!important;
+padding: 20px!important;
 border: 1px solid #ddd!important;
 margin-left: 0!important;
 margin-top: 10px;
 border-radius: 0px;
+    width: 100%;
 }
 
 .dCollapse h4 {
@@ -414,14 +420,16 @@ n {*/
 
 #vHeatmap {
 	background:#C2DCF0;
-	border-radius:5px;
-    margin-right:-10px;
-    width:25px;
+    width: 25px;
+    height: 400px;
+    position: fixed;
+    top: 40px;
+    right: 20px;
 }
 
 .vHeatmapPoint {
 	background-color:rgba(255,0,0,0.4);
-	height:5px;
+	height:8px;
 	width:2%;
 	position:absolute;
 }
@@ -432,7 +440,7 @@ width: 100%;
 	margin-left:0px;
 	border-radius:3px;
 overflow: hidden;
- border: 2px solid rgb(107, 107, 107);
+ border: 1px solid rgb(107, 107, 107);
 }
 
 #lines {
@@ -442,14 +450,7 @@ overflow: hidden;
 }
 
 #dMain {
-border: 2px solid rgb(107, 107, 107);
-border-left: none;
-position: relative;
-    padding: 0 15px;
-    margin-left: -35px;
-    height: 400px;
-    overflow-y: scroll;
-    overflow-x: hidden;
+
 }
 
 #dFooter {
@@ -495,12 +496,18 @@ position: relative;
 }
 
 .threadText {
-	background-color:#fff;
-	line-height:16px;
-	font-size:13px;
-	text-align:justify;
-	float:left;
-	overflow-x:hidden;
+    background-color: #fff;
+    line-height: 16px;
+    font-size: 13px;
+    text-align: justify;
+    overflow-x: hidden;
+    display: inline-block;
+    padding-left: 10px;
+    margin-top: 10px;
+    padding-top: 5px;
+    border-left: 2px solid #eee;
+    margin-left: 30px;
+    box-shadow: inset 24px 0px 66px -60px #eee;
 }
 
 #dTitleView {
@@ -787,7 +794,7 @@ span .highlight {
 	clear:both;
 	display:none;
 	position:absolute;
-	top:-50px;
+	top:30px;
 	left:10%;
 	padding:12px;
 	background:#eee;
@@ -852,8 +859,9 @@ span .highlight {
 	
 
 .uList {
-padding: 0px !important;
-	width:32px;
+    padding: 0px !important;
+    width: 32px;
+    height: 34px;
 }
 
 #inputNote {
@@ -879,7 +887,6 @@ padding: 0px !important;
 }
 
 #discussionWrap {
-	background-color: white;
     padding-top: 20px;
 }
 #discussionWrap .jumbotron {

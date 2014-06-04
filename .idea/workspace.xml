@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eab6cc5d-63c4-4203-8c87-0d6ca5d95f95" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dscourse.iml" afterPath="$PROJECT_DIR$/.idea/dscourse.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dscourse/dscourse.css" afterPath="$PROJECT_DIR$/dscourse/dscourse.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dscourse/dscourse.html" afterPath="$PROJECT_DIR$/dscourse/dscourse.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dscourse/dscourse.js" afterPath="$PROJECT_DIR$/dscourse/dscourse.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -31,26 +33,8 @@
       <file leaf-file-name="dscourse.css" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="587" column="20" selection-start="8604" selection-end="8604" vertical-scroll-proportion="0.0" vertical-offset="9951" max-vertical-offset="16686">
+            <state line="259" column="18" selection-start="3935" selection-end="3935" vertical-scroll-proportion="-9.923077" vertical-offset="3627" max-vertical-offset="14010">
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dscourse.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1768" column="36" selection-start="69461" selection-end="69461" vertical-scroll-proportion="0.0" vertical-offset="31716" max-vertical-offset="40770">
-              <folding>
-                <marker date="1400163669000" expanded="false" signature="34664:34677" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="45106:45112" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="45464:45471" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="61952:61963" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="63334:63345" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="65678:65690" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="65705:65722" placeholder="..." />
-                <marker date="1400163669000" expanded="false" signature="70130:70136" placeholder="..." />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -58,7 +42,41 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="59" column="10" selection-start="2775" selection-end="2801" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="1638">
+            <state line="48" column="4" selection-start="1850" selection-end="1850" vertical-scroll-proportion="-16.625" vertical-offset="321" max-vertical-offset="1380">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api/data.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="131" column="16" selection-start="3149" selection-end="3149" vertical-scroll-proportion="-14.375" vertical-offset="1620" max-vertical-offset="2385">
+              <folding>
+                <marker date="1401743953000" expanded="true" signature="1350:1396" placeholder="SELECT * FRO..posts..." />
+                <marker date="1401743953000" expanded="true" signature="2197:2476" placeholder="INSERT INTO ..." />
+                <marker date="1401743953000" expanded="true" signature="3010:3046" placeholder="DELETE FROM ..." />
+                <marker date="1401743953000" expanded="true" signature="3027:3046" placeholder="UPDATE discu..." />
+                <marker date="1401743953000" expanded="true" signature="3588:3843" placeholder="UPDATE posts..." />
+                <marker date="1401743953000" expanded="true" signature="3594:3823" placeholder="INSERT INTO ..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api/config.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1" column="0" selection-start="6" selection-end="6" vertical-scroll-proportion="-0.625" vertical-offset="0" max-vertical-offset="330">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sampledata.json" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="81" column="9" selection-start="2382" selection-end="2382" vertical-scroll-proportion="-41.25" vertical-offset="225" max-vertical-offset="1515">
               <folding />
             </state>
           </provider>
@@ -67,17 +85,36 @@
       <file leaf-file-name="dscourse.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="22" selection-start="1210" selection-end="1210" vertical-scroll-proportion="0.0" vertical-offset="360" max-vertical-offset="3258">
+            <state line="104" column="23" selection-start="5101" selection-end="5102" vertical-scroll-proportion="-5.78" vertical-offset="1271" max-vertical-offset="2010">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sampledata.json" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
+      <file leaf-file-name="temp.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dscourse/temp.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="18" selection-start="538" selection-end="538" vertical-scroll-proportion="0.0" vertical-offset="522" max-vertical-offset="1818">
+            <state line="35" column="12" selection-start="1912" selection-end="1912" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="750">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dscourse.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="652" column="58" selection-start="24557" selection-end="24557" vertical-scroll-proportion="0.43119267" vertical-offset="9451" max-vertical-offset="22380">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+                <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+                <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -98,20 +135,21 @@
         <option value="$PROJECT_DIR$/data.json" />
         <option value="$PROJECT_DIR$/css/dscourse.css" />
         <option value="$PROJECT_DIR$/js/dscourse.js" />
-        <option value="$PROJECT_DIR$/dscourse/dscourse.css" />
-        <option value="$PROJECT_DIR$/dscourse/dscourse.html" />
-        <option value="$PROJECT_DIR$/index.html" />
-        <option value="$PROJECT_DIR$/dscourse/dscourse.js" />
         <option value="$PROJECT_DIR$/dscourse/sampledata.json" />
+        <option value="$PROJECT_DIR$/dscourse/temp.html" />
+        <option value="$PROJECT_DIR$/api/config.php" />
+        <option value="$PROJECT_DIR$/api/data.php" />
+        <option value="$PROJECT_DIR$/dscourse/dscourse.css" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/dscourse/dscourse.html" />
+        <option value="$PROJECT_DIR$/dscourse/dscourse.js" />
       </list>
     </option>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="302" />
-    <option name="y" value="22" />
-    <option name="width" value="1535" />
-    <option name="height" value="970" />
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -158,6 +196,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -232,9 +271,22 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dscourse" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="dscourse" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -244,7 +296,7 @@
     <property name="options.searchVisible" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Library/js/jquery-1.11.1.js" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="FullScreen" value="false" />
+    <property name="FullScreen" value="true" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
@@ -298,7 +350,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="302" y="22" width="1535" height="970" extended-state="0" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -306,7 +358,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2318362" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14377682" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -315,12 +367,33 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32937366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32808024" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32937366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -339,9 +412,170 @@
     <option name="LAST_COMMIT_MESSAGE" value="Reorganizing site structure, fixes" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="447" column="24" selection-start="6613" selection-end="6613" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13935">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/data.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="1" selection-start="144" selection-end="144" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="420">
+          <folding>
+            <marker date="1401743953000" expanded="true" signature="1350:1396" placeholder="SELECT * FRO..posts..." />
+            <marker date="1401743953000" expanded="true" signature="2197:2476" placeholder="INSERT INTO ..." />
+            <marker date="1401743953000" expanded="true" signature="3010:3046" placeholder="DELETE FROM ..." />
+            <marker date="1401743953000" expanded="true" signature="3027:3046" placeholder="UPDATE discu..." />
+            <marker date="1401743953000" expanded="true" signature="3588:3843" placeholder="UPDATE posts..." />
+            <marker date="1401743953000" expanded="true" signature="3594:3823" placeholder="INSERT INTO ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="2" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="345">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="76" selection-start="689" selection-end="701" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="2085">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/temp.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="12" selection-start="1912" selection-end="1912" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="750">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="108" column="36" selection-start="3717" selection-end="3732" vertical-scroll-proportion="0.0" vertical-offset="1620" max-vertical-offset="33960">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="447" column="24" selection-start="6613" selection-end="6613" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13935">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/data.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="1" selection-start="144" selection-end="144" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="420">
+          <folding>
+            <marker date="1401743953000" expanded="true" signature="1350:1396" placeholder="SELECT * FRO..posts..." />
+            <marker date="1401743953000" expanded="true" signature="2197:2476" placeholder="INSERT INTO ..." />
+            <marker date="1401743953000" expanded="true" signature="3010:3046" placeholder="DELETE FROM ..." />
+            <marker date="1401743953000" expanded="true" signature="3027:3046" placeholder="UPDATE discu..." />
+            <marker date="1401743953000" expanded="true" signature="3588:3843" placeholder="UPDATE posts..." />
+            <marker date="1401743953000" expanded="true" signature="3594:3823" placeholder="INSERT INTO ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="30" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0" vertical-offset="180" max-vertical-offset="345">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="76" selection-start="689" selection-end="701" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="2085">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/temp.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="12" selection-start="1912" selection-end="1912" vertical-scroll-proportion="0.0" vertical-offset="117" max-vertical-offset="750">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="108" column="36" selection-start="3717" selection-end="3732" vertical-scroll-proportion="0.0" vertical-offset="1620" max-vertical-offset="33960">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="587" column="20" selection-start="8604" selection-end="8604" vertical-scroll-proportion="0.0" vertical-offset="8805" max-vertical-offset="13905">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1768" column="36" selection-start="69461" selection-end="69461" vertical-scroll-proportion="0.0" vertical-offset="26520" max-vertical-offset="33975">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="59" column="10" selection-start="2775" selection-end="2801" vertical-scroll-proportion="0.0" vertical-offset="885" max-vertical-offset="1365" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="22" selection-start="1210" selection-end="1210" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="2715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="18" selection-start="538" selection-end="538" vertical-scroll-proportion="0.0" vertical-offset="435" max-vertical-offset="1515" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
       <provider selected="true" editor-type-id="text-editor">
         <state line="587" column="20" selection-start="8604" selection-end="8604" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="16686">
@@ -353,23 +587,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="1768" column="36" selection-start="69461" selection-end="69461" vertical-scroll-proportion="0.0" vertical-offset="31716" max-vertical-offset="40770">
           <folding>
-            <marker date="1400163669000" expanded="false" signature="34664:34677" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="45106:45112" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="45464:45471" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="61952:61963" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="63334:63345" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="65678:65690" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="65705:65722" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="70130:70136" placeholder="..." />
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="10" selection-start="2775" selection-end="2801" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="1638">
-          <folding />
-        </state>
+        <state line="59" column="10" selection-start="2775" selection-end="2801" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="1638" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
@@ -381,9 +614,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="18" selection-start="538" selection-end="538" vertical-scroll-proportion="0.0" vertical-offset="522" max-vertical-offset="1818">
-          <folding />
-        </state>
+        <state line="29" column="18" selection-start="538" selection-end="538" vertical-scroll-proportion="0.0" vertical-offset="522" max-vertical-offset="1818" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
@@ -397,23 +628,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="1204" column="13" selection-start="47197" selection-end="47197" vertical-scroll-proportion="0.0" vertical-offset="21184" max-vertical-offset="41112">
           <folding>
-            <marker date="1400163669000" expanded="false" signature="34664:34677" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="45106:45112" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="45464:45471" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="61952:61963" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="63334:63345" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="65678:65690" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="65705:65722" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="70130:70136" placeholder="..." />
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="0" selection-start="1390" selection-end="1390" vertical-scroll-proportion="0.0" vertical-offset="289" max-vertical-offset="1620">
-          <folding />
-        </state>
+        <state line="39" column="0" selection-start="1390" selection-end="1390" vertical-scroll-proportion="0.0" vertical-offset="289" max-vertical-offset="1620" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
@@ -425,9 +655,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="33" selection-start="294" selection-end="294" vertical-scroll-proportion="0.0" vertical-offset="234" max-vertical-offset="1818">
-          <folding />
-        </state>
+        <state line="13" column="33" selection-start="294" selection-end="294" vertical-scroll-proportion="0.0" vertical-offset="234" max-vertical-offset="1818" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
@@ -446,59 +674,84 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="12" selection-start="360" selection-end="360" vertical-scroll-proportion="0.0" vertical-offset="324" max-vertical-offset="1818">
-          <folding />
-        </state>
+        <state line="18" column="12" selection-start="360" selection-end="360" vertical-scroll-proportion="0.0" vertical-offset="324" max-vertical-offset="1818" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="36" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0" vertical-offset="252" max-vertical-offset="4122">
+        <state line="32" column="36" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0" vertical-offset="252" max-vertical-offset="4122" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/temp.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="12" selection-start="1912" selection-end="1912" vertical-scroll-proportion="0.0" vertical-offset="117" max-vertical-offset="750">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
+    <entry file="file://$PROJECT_DIR$/api/config.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="587" column="20" selection-start="8604" selection-end="8604" vertical-scroll-proportion="0.0" vertical-offset="9951" max-vertical-offset="16686">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="22" selection-start="1210" selection-end="1210" vertical-scroll-proportion="0.0" vertical-offset="360" max-vertical-offset="3258">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1768" column="36" selection-start="69461" selection-end="69461" vertical-scroll-proportion="0.0" vertical-offset="31716" max-vertical-offset="40770">
-          <folding>
-            <marker date="1400163669000" expanded="false" signature="34664:34677" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="45106:45112" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="45464:45471" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="61952:61963" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="63334:63345" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="65678:65690" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="65705:65722" placeholder="..." />
-            <marker date="1400163669000" expanded="false" signature="70130:70136" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="10" selection-start="2775" selection-end="2801" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="1638">
+        <state line="1" column="0" selection-start="6" selection-end="6" vertical-scroll-proportion="-0.625" vertical-offset="0" max-vertical-offset="330">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dscourse/sampledata.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="18" selection-start="538" selection-end="538" vertical-scroll-proportion="0.0" vertical-offset="522" max-vertical-offset="1818">
+        <state line="81" column="9" selection-start="2382" selection-end="2382" vertical-scroll-proportion="-41.25" vertical-offset="225" max-vertical-offset="1515">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/data.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="131" column="16" selection-start="3149" selection-end="3149" vertical-scroll-proportion="-14.375" vertical-offset="1620" max-vertical-offset="2385">
+          <folding>
+            <marker date="1401743953000" expanded="true" signature="1350:1396" placeholder="SELECT * FRO..posts..." />
+            <marker date="1401743953000" expanded="true" signature="2197:2476" placeholder="INSERT INTO ..." />
+            <marker date="1401743953000" expanded="true" signature="3010:3046" placeholder="DELETE FROM ..." />
+            <marker date="1401743953000" expanded="true" signature="3027:3046" placeholder="UPDATE discu..." />
+            <marker date="1401743953000" expanded="true" signature="3588:3843" placeholder="UPDATE posts..." />
+            <marker date="1401743953000" expanded="true" signature="3594:3823" placeholder="INSERT INTO ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="259" column="18" selection-start="3935" selection-end="3935" vertical-scroll-proportion="-9.923077" vertical-offset="3627" max-vertical-offset="14010">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="4" selection-start="1850" selection-end="1850" vertical-scroll-proportion="-16.625" vertical-offset="321" max-vertical-offset="1380">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="104" column="23" selection-start="5101" selection-end="5102" vertical-scroll-proportion="-5.78" vertical-offset="1271" max-vertical-offset="2010">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dscourse/dscourse.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="652" column="58" selection-start="24557" selection-end="24557" vertical-scroll-proportion="0.43119267" vertical-offset="9451" max-vertical-offset="22380">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1401923221000" expanded="true" signature="22785:22798" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30450:30456" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="30808:30815" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="40262:40273" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="41644:41655" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="43989:44001" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="44016:44033" placeholder="..." />
+            <marker date="1401923221000" expanded="true" signature="46984:46990" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
