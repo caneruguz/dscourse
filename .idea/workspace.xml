@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="eab6cc5d-63c4-4203-8c87-0d6ca5d95f95" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dscourse/dscourse.css" afterPath="$PROJECT_DIR$/dscourse/dscourse.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dscourse/dscourse.html" afterPath="$PROJECT_DIR$/dscourse/dscourse.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dscourse/dscourse.js" afterPath="$PROJECT_DIR$/dscourse/dscourse.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="eab6cc5d-63c4-4203-8c87-0d6ca5d95f95" name="Default" comment="" />
     <ignored path="dscourse.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
