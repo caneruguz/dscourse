@@ -2,7 +2,7 @@
 *  All dscourse related code
 */
 
-function Dscourse() {
+function Dscourse(apiLink) {
     // Set global variables
     var top = this;
     // Main discussion data wrapper
@@ -23,6 +23,7 @@ function Dscourse() {
         media : true,
         timeline : true
     };
+    this.api = apiLink;
 
 
     // Run initializing functions
@@ -435,7 +436,7 @@ Dscourse.prototype.GetData = function() {
     // Ajax call to get data and put all data into json object
     $.ajax({ 
         type : "POST",
-        url : "api/data.php",
+        url : main.api,
         data : {
             action : "GetData",
             postPage : 1 // This needs to be received from the page.
@@ -467,7 +468,7 @@ Dscourse.prototype.DeletePost = function(postId) {
     var main = this;
     $.ajax({
         type: 'POST',
-        url: 'api/data.php',
+        url: main.api,
         data: {
             action: 'DeletePost',
             postId: postId
@@ -1334,7 +1335,7 @@ Dscourse.prototype.AddPost = function() {
 
         $.ajax({// Add user to the database with api.
             type : "POST",
-            url : "api/data.php",
+            url : main.api,
             data : {
                 action : 'EditPost',
                 post : editPost
@@ -1356,7 +1357,7 @@ Dscourse.prototype.AddPost = function() {
     } else {
         $.ajax({
             type : "POST",
-            url : "api/data.php",
+            url : main.api,
             data : {
                 post : post,
                 action : 'AddPost'
