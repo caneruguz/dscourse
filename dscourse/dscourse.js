@@ -2,7 +2,7 @@
 *  All dscourse related code
 */
 
-function Dscourse(apiLink) {
+function Dscourse(options) {
     // Set global variables
     var top = this;
     // Main discussion data wrapper
@@ -23,7 +23,8 @@ function Dscourse(apiLink) {
         media : true,
         timeline : true
     };
-    this.api = apiLink;
+    this.api = options.api;
+    this.rootPath = options.rootPath;
 
 
     // Run initializing functions
@@ -413,7 +414,7 @@ Dscourse.prototype.loadDscourse = function() {
      *	Load the html and get the data when that works.
      */
     var main = this;
-    $( "#dscourse" ).load( "dscourse/dscourse.html", function() {
+    $( "#dscourse" ).load( main.rootPath, function() {
         main.GetData();
         // When the main window scrolls heatmap needs to redraw
         $('#dMain').on('scroll', function() {
